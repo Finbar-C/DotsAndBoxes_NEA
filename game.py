@@ -6,5 +6,6 @@ class Game():
         pass
 
 class Board():
-    pass
+    def init(self, rows, cols):
+        self.__grid = [[(None, None, None, None) for _ in range(cols)] for _ in range(rows)]
 

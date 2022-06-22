@@ -19,8 +19,8 @@ class Terminal():
 
 class GUI():
     def __init__(self):
-        root = Tk()
-        root.title("Dots and Boxes")
+        self.__root = Tk()
+        self.__root.title("Dots and Boxes")
     
     def run(self):
         self.__root.mainloop()

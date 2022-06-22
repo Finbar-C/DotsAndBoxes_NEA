@@ -8,8 +8,7 @@ g: play with GUI
 t: play with Terminal""")
     quit()
 
-
-if __name__ == "__main__":
+def main():
     if len(argv) != 2:
         usage()
     elif argv[1] == "t":
@@ -20,3 +19,7 @@ if __name__ == "__main__":
         usage()
     
     game.run()
+
+
+if __name__ == "__main__":
+    main()
