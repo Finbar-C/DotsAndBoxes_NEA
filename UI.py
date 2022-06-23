@@ -12,8 +12,11 @@ class UI():
 
 class Terminal():
     def __init__(self):
-        self.__game = Game()
+        self.__game = Game((4,4), 2, ("1", "2"))
     
+    def __repr__(self):
+        pass
+
     def run(self):
         pass
 
@@ -30,5 +33,8 @@ class NewGame(GUI):
 
 class Settings(GUI):
     pass # displays settings window
+
+class GameWin(GUI):
+    pass # window in which game is played
 
 
