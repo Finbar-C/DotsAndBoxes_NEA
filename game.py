@@ -1,3 +1,5 @@
+from UI import *
+
 class Game():
 
     def __init__(self, dims: tuple, pnum: int, names: tuple):
@@ -10,24 +12,25 @@ class Game():
     def place(self, pos, dir):
         pass
 
+    def __repr__(self):
+        return str(self.__board)
+
 class Board():
 
-    EMPTY = " "
-    LINE_H = "-"
+    EMPTY = "  "
+    LINE_H = "--"
     LINE_V = "|"
 
     def __init__(self, rows: int, cols: int):
-        self.__grid = [[(None, None, None, None) for _ in range(cols)] for _ in range(rows)]
+        self.__grid = [[(Board.EMPTY, Board.EMPTY, Board.EMPTY, Board.EMPTY) for _ in range(cols)] for _ in range(rows)]
         self.__rows = rows
         self.__cols = cols
     
     def __repr__(self):
-        for i in range(self.__rows):
-            row = ""
-            for j in range(self.__cols):
-                row += ". "
-            row += ".\n"
-            row += "  " for _ in range(self.__cols)
+        for boxx in range(self.__rows):
+            for boxy in range(self.__cols):
+                pass
+            #go box by box, check each side
             
             
 
@@ -35,3 +38,6 @@ class Player():
     def __init__(self, name):
         self.__name = name
 
+if __name__ == "__main__":
+    game = Terminal()
+    game.run()

@@ -10,7 +10,7 @@ class UI():
     def run(self):
         raise NotImplementedError
 
-class Terminal():
+class Terminal(UI):
     def __init__(self):
         self.__game = Game((4,4), 2, ("1", "2"))
     
@@ -18,9 +18,10 @@ class Terminal():
         pass
 
     def run(self):
-        pass
+        print(self.__game)
 
-class GUI():
+
+class GUI(UI):
     def __init__(self):
         self.__root = Tk()
         self.__root.title("Dots and Boxes")
