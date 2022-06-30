@@ -1,5 +1,3 @@
-from UI import *
-
 
 class Board():
 
@@ -9,6 +7,7 @@ class Board():
 
     def __init__(self, rows: int, cols: int):
         self.__grid = [[(Board.EMPTY, Board.EMPTY, Board.EMPTY, Board.EMPTY) for _ in range(cols)] for _ in range(rows)]
+        self.__claimed = [[None for _ in range(cols)] for _ in range(rows)]
         self.__rows = rows
         self.__cols = cols
     
@@ -46,6 +45,12 @@ class Board():
             (self.__grid[pos[0]][pos[1]])[dir] = Board.H_LINE
         elif dir >= 2:
             (self.__grid[pos[0]][pos[1]])[dir] = Board.V_LINE
+    
+    def MatchedPlace(self, pos: tuple, dir: str):
+        pass # match up placement to equivalent place in neighbouring box
+
+    def ClaimBox(self, pos: tuple, pnum: int):
+        self.__claimed[pos[0]][pos[1]] = pnum
 
 
 
@@ -63,10 +68,6 @@ class Player():
     @property
     def getName(self):
         return self.__name
-
-if __name__ == "__main__":
-    game = Terminal()
-    game.run()
 
 class Game():
 

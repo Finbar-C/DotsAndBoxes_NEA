@@ -39,3 +39,6 @@ class GameWin(GUI):
     pass # window in which game is played
 
 
+if __name__ == "__main__":
+    game = Terminal()
+    game.run()
