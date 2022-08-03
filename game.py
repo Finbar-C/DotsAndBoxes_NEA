@@ -1,4 +1,7 @@
 
+from curses import newpad
+
+
 class Board():
 
     EMPTY = "  "
@@ -7,13 +10,13 @@ class Board():
 
     def __init__(self, rows: int, cols: int):
         self.__grid = [[(Board.EMPTY, Board.EMPTY, Board.EMPTY, Board.EMPTY) for _ in range(cols)] for _ in range(rows)]
-        self.__claimed = [[None for _ in range(cols)] for _ in range(rows)]
+        self.__claimed = [[Board.EMPTY for _ in range(cols)] for _ in range(rows)]
         self.__rows = rows
         self.__cols = cols
-    
+
     def __repr__(self):
-        for boxx in range(self.__rows):
-            for boxy in range(self.__cols):
+        for boxy in range(self.__rows):
+            for boxx in range(self.__cols):
                 pass
             #go box by box, check each side
     
@@ -21,6 +24,13 @@ class Board():
         for i in range(4):
             if (self.__grid[pos[0]][pos[1]])[i] == Board.EMPTY:
                 return False
+        return True
+     
+    def CheckFull(self):
+        for i in range(self.__rows):
+            for j in range(self.__cols):
+                if not self.checkBox((i, j)):
+                    return False
         return True
     
     def directionConvert(self, dir:str):
@@ -47,7 +57,20 @@ class Board():
             (self.__grid[pos[0]][pos[1]])[dir] = Board.V_LINE
     
     def MatchedPlace(self, pos: tuple, dir: str):
-        pass # match up placement to equivalent place in neighbouring box
+        dir = Board.directionConvert(dir)
+        if dir == 0:
+            if pos[0] - 1 >= 0:
+                return (pos[0] - 1, pos[1]), "S"
+        elif dir == 1:
+            if pos[0] + 1 < self.__rows:
+                return (pos[0] + 1, pos[1]), "N"
+        elif dir == 2:
+            if pos[1] + 1 < self.__cols:
+                return (pos[0], pos[1] + 1), "W"
+        elif dir == 3:
+            if pos[1] - 1 >= 0:
+                return (pos[0], pos[1] - 1), "E"
+    # match up placement to equivalent place in neighbouring box
 
     def ClaimBox(self, pos: tuple, pnum: int):
         self.__claimed[pos[0]][pos[1]] = pnum
@@ -86,13 +109,21 @@ class Game():
     def place(self, pos: tuple, dir: str):
         if self.__board.checkClear(pos, dir):
             self.__board.place(pos, dir)
+            newPos, newDir = self.__board.MatchedPlace(pos, dir)
+            self.__board.place(newPos, newDir)
+        if self.__board.checkBox(pos):
+            self.__board.ClaimBox(pos, self.__turn)
+        if self.__board.checkBox(newPos):
+            self.__board.ClaimBox(newPos, self.__turn)
         
 
     def __repr__(self):
         return str(self.__board)
     
     def End(self):
-        pass
+        if self.__board.CheckFull():
+            return True
+        return False
 
     def nextTurn(self):
         pass

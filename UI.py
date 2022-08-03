@@ -17,8 +17,16 @@ class Terminal(UI):
     def __repr__(self):
         pass
 
-    def run(self):
-        print(self.__game)
+    def place(self):
+        row = int(input("What is the Row Number for your box? "))
+        col = int(input("What is the Column Number for your box? "))
+        pos = (row, col)
+        direction = input("Which side of the box would you like to play (N, S, E or W)? ")
+        self.__game.place(pos, direction)
+
+    def play(self):
+        while not self.__game.End():
+            pass
 
 
 class GUI(UI):
