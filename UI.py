@@ -22,11 +22,19 @@ class Terminal(UI):
         col = int(input("What is the Column Number for your box? "))
         pos = (row, col)
         direction = input("Which side of the box would you like to play (N, S, E or W)? ")
-        self.__game.place(pos, direction)
+        cont = self.__game.place(pos, direction)
+        return cont
 
     def play(self):
         while not self.__game.End():
-            pass
+            Terminal.playTurn()
+    
+    def playTurn(self):
+        cont = Terminal.place()
+        if cont == True:
+            Terminal.playTurn()
+        else:
+            self.__game.nextTurn()
 
 
 class GUI(UI):

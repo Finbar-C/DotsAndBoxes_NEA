@@ -1,5 +1,4 @@
 
-from curses import newpad
 
 
 class Board():
@@ -20,19 +19,6 @@ class Board():
                 pass
             #go box by box, check each side
     
-    def checkBox(self, pos: tuple):
-        for i in range(4):
-            if (self.__grid[pos[0]][pos[1]])[i] == Board.EMPTY:
-                return False
-        return True
-     
-    def CheckFull(self):
-        for i in range(self.__rows):
-            for j in range(self.__cols):
-                if not self.checkBox((i, j)):
-                    return False
-        return True
-    
     def directionConvert(self, dir:str):
         if dir.upper() == "N":
             return 0
@@ -43,21 +29,39 @@ class Board():
         elif dir.upper() == "W":
             return 3
     
+    def checkLine(self, pos: tuple, dir: int):
+        if (self.__grid[pos[0]][pos[1]])[dir] == Board.EMPTY:
+            return False
+        return True
+
+    def checkBox(self, pos: tuple):
+        for i in range(4):
+            if not self.checkLine(pos, i):
+                return False
+        return True
+     
+    def CheckFull(self):
+        for i in range(self.__rows):
+            for j in range(self.__cols):
+                if not self.checkBox((i, j)):
+                    return False
+        return True
+    
     def checkClear(self, pos: tuple, dir: str):
-        dir = Board.directionConvert(dir)
+        dir = self.directionConvert(dir)
         if (self.__grid[pos[0]][pos[1]])[dir] == Board.EMPTY:
             return True
         return False
     
     def place(self, pos: tuple, dir: str):
-        dir = Board.directionConvert(dir)
+        dir = self.directionConvert(dir)
         if dir <= 1:
             (self.__grid[pos[0]][pos[1]])[dir] = Board.H_LINE
         elif dir >= 2:
             (self.__grid[pos[0]][pos[1]])[dir] = Board.V_LINE
     
     def MatchedPlace(self, pos: tuple, dir: str):
-        dir = Board.directionConvert(dir)
+        dir = self.directionConvert(dir)
         if dir == 0:
             if pos[0] - 1 >= 0:
                 return (pos[0] - 1, pos[1]), "S"
@@ -107,14 +111,18 @@ class Game():
         return self.__turn
 
     def place(self, pos: tuple, dir: str):
+        boxCreated = False
         if self.__board.checkClear(pos, dir):
             self.__board.place(pos, dir)
             newPos, newDir = self.__board.MatchedPlace(pos, dir)
             self.__board.place(newPos, newDir)
         if self.__board.checkBox(pos):
             self.__board.ClaimBox(pos, self.__turn)
+            boxCreated = True
         if self.__board.checkBox(newPos):
             self.__board.ClaimBox(newPos, self.__turn)
+            boxCreated = True
+        return boxCreated
         
 
     def __repr__(self):
@@ -126,5 +134,9 @@ class Game():
         return False
 
     def nextTurn(self):
-        pass
+        if self.__turn + 1 < len(self.players):
+            self.__turn += 1
+        elif self.__turn +1 == len(self.players):
+            self.__turn = 0
+
 
