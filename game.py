@@ -14,9 +14,37 @@ class Board():
         self.__cols = cols
 
     def __repr__(self):
-        for boxy in range(self.__rows):
-            for boxx in range(self.__cols):
-                pass
+        display = []
+        for row in range(self.__rows):
+            dRow1 = []
+            dRow2 = []
+            for col in range(self.__cols):
+                dRow1.append(".")
+                dRow1.append(self.__grid[row][col][0])
+                dRow2.append(self.__grid[row][col][2])
+                if self.__claimed[row][col] == Board.EMPTY:
+                    dRow2.append(Board.EMPTY)
+                else:
+                    dRow2.append(str(self.__claimed[row][col]) + " ")
+            col = self.__cols - 1
+            dRow1.append(".")
+            dRow1.append("\n")
+            dRow2.append(self.__grid[row][col][3])
+            dRow2.append("\n")
+            display += dRow1
+            display += dRow2
+        row = self.__rows - 1
+        dRow = []
+        for col in range(self.__cols):
+            dRow.append(".")
+            dRow.append(self.__grid[row][col][1])
+            dRow.append(".")
+        display += dRow
+        ReturnStr = ""
+        for i in range(len(display)):
+            ReturnStr += display[i]
+        return ReturnStr
+                    
             #go box by box, check each side
     
     def directionConvert(self, dir:str):
