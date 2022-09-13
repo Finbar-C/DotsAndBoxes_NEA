@@ -14,6 +14,9 @@ class Terminal(UI):
     def __init__(self):
         self.__game = Game((4,4), 2, ("1", "2"))
     
+    def run(self):
+        self.play()
+    
     def __repr__(self):
         pass
 
@@ -27,9 +30,11 @@ class Terminal(UI):
 
     def play(self):
         while not self.__game.End():
+
             Terminal.playTurn()
     
     def playTurn(self):
+        print(self.__game)
         cont = Terminal.place()
         if cont == True:
             Terminal.playTurn()
