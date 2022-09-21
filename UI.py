@@ -82,15 +82,13 @@ class GUI(UI):
         window.title("Dots and Boxes - Help")
         window = Toplevel(self.__root)
         frame = Frame(window)
-        frame.pack()
         Label(frame, text="Filler Text Until I Figure Out What To Write in The Help Window")
 
         scroll = Scrollbar(frame)
-        console = Text(frame, height=4, width = 50)
         scroll.pack(side=RIGHT, fill = Y)
-        console.pack(side=LEFT, fill = Y)
-        scroll.config(command=console.yview)
-        console.config(yscrollcommand=scroll.set)
+        frame.pack(side=LEFT, fill=Y)
+        scroll.config(command=frame.yview)
+        window.config(yscrollcommand=scroll.set)
 
     def __Exit(self):
         self.__root.quit()
