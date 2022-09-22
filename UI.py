@@ -67,7 +67,7 @@ class GUI(UI):
         self.__root.mainloop()
 
     def __NewGame(self):
-        window = Tk()
+        window = Toplevel(self.__root)
         window.title("Game Creation Menu")
         frame = Grid(window)
 
@@ -78,11 +78,10 @@ class GUI(UI):
         pass # window in which game is played
 
     def __showHelpMain(self):
-        window = Tk()
-        window.title("Dots and Boxes - Help")
         window = Toplevel(self.__root)
+        window.title("Dots and Boxes - Help")
         frame = Frame(window)
-        Label(frame, text="Filler Text Until I Figure Out What To Write in The Help Window")
+        Label(frame, text="Filler Text Until I Figure Out What To Write in The Help Window").pack()
 
         scroll = Scrollbar(frame)
         scroll.pack(side=RIGHT, fill = Y)
