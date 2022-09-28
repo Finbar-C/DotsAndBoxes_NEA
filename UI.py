@@ -79,7 +79,7 @@ class GUI(UI):
     def __NewGame(self):
         window = Toplevel(self.__root)
         window.title("Game Creation Menu")
-        frame = Grid()
+        frame = Frame(window)
         
         Label(frame, text="Width:").grid(row=0, column=0, padx=5, pady=5)
         Entry(frame).grid(row=0, column=1, pady=5, padx=5)
@@ -91,7 +91,7 @@ class GUI(UI):
         walls_switch.grid(row=2, column=1, padx=5, pady=5)
         Button(frame, text="Create New Game", command=self.__GameWin).grid(row=3, columnspan=2, padx=5, pady=5)
 
-        frame.pack(window)
+        frame.pack()
 
 
     def __Settings(self):
