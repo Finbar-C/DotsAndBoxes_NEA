@@ -1,3 +1,4 @@
+
 from game import *
 from accounts import *
 from tkinter import *
@@ -41,6 +42,15 @@ class Terminal(UI):
         else:
             self.__game.nextTurn()
 
+def walls_toggle(): #switch method 
+    global on_var
+    if not var:
+        walls_switch.config(text="on", bg="white", fg="green")
+        var = True
+    if var:
+        walls_switch.config(text="Off", bg="grey", fg="red")
+        var = False
+
 
 class GUI(UI):
     def __init__(self):
@@ -69,7 +79,20 @@ class GUI(UI):
     def __NewGame(self):
         window = Toplevel(self.__root)
         window.title("Game Creation Menu")
-        frame = Grid(window)
+        frame = Grid()
+        
+        Label(frame, text="Width:").grid(row=0, column=0, padx=5, pady=5)
+        Entry(frame).grid(row=0, column=1, pady=5, padx=5)
+        Label(frame, text="Height:").grid(row=1, column=0, padx=5, pady=5)
+        Entry(frame).grid(row=1, column=1, pady=5, padx=5)
+        Label(frame, text="Walls?").grid(row=2, column=0, padx=5, pady=5)
+        walls_var = False
+        walls_switch = Button(frame, text="Off", bg="grey", fg="red", command=walls_toggle)
+        walls_switch.grid(row=2, column=1, padx=5, pady=5)
+        Button(frame, text="Create New Game", command=self.__GameWin).grid(row=3, columnspan=2, padx=5, pady=5)
+
+        frame.pack(window)
+
 
     def __Settings(self):
         pass # displays settings window
@@ -91,6 +114,8 @@ class GUI(UI):
 
     def __Exit(self):
         self.__root.quit()
+
+
 
 
 if __name__ == "__main__":
