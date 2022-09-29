@@ -42,14 +42,6 @@ class Terminal(UI):
         else:
             self.__game.nextTurn()
 
-def walls_toggle(): #switch method 
-    global on_var
-    if not var:
-        walls_switch.config(text="on", bg="white", fg="green")
-        var = True
-    if var:
-        walls_switch.config(text="Off", bg="grey", fg="red")
-        var = False
 
 
 class GUI(UI):
@@ -86,19 +78,27 @@ class GUI(UI):
         Label(frame, text="Height:").grid(row=1, column=0, padx=5, pady=5)
         Entry(frame).grid(row=1, column=1, pady=5, padx=5)
         Label(frame, text="Walls?").grid(row=2, column=0, padx=5, pady=5)
+        global walls_var
         walls_var = False
-        walls_switch = Button(frame, text="Off", bg="grey", fg="red", command=walls_toggle)
-        walls_switch.grid(row=2, column=1, padx=5, pady=5)
+        self.__walls_switch = Button(frame, text="Off", bg="grey", fg="red", command=self.walls_toggle)
+        self.__walls_switch.grid(row=2, column=1, padx=5, pady=5)
         Button(frame, text="Create New Game", command=self.__GameWin).grid(row=3, columnspan=2, padx=5, pady=5)
 
         frame.pack()
 
+    def walls_toggle(self): #switch method 
+        if not walls_var:
+            self.__walls_switch.config(text="on", bg="white", fg="green")
+            walls_var = True
+        if walls_var:
+            self.__walls_switch.config(text="Off", bg="grey", fg="red")
+            walls_var = False
 
     def __Settings(self):
         pass # displays settings window
 
     def __GameWin(self):
-        pass # window in which game is played
+        self.__CurrentGame = Game()
 
     def __showHelpMain(self):
         window = Toplevel(self.__root)
