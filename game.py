@@ -126,7 +126,7 @@ class Player():
 
 class Game():
 
-    def __init__(self, dims: tuple, pnum: int, names: tuple):
+    def __init__(self, dims: tuple, pnum: int, names: list):
         self.__board = Board(dims[0], dims[1])
         self.players = []
         for i in range(pnum):

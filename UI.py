@@ -74,15 +74,17 @@ class GUI(UI):
         frame = Frame(window)
         
         Label(frame, text="Width:").grid(row=0, column=0, padx=5, pady=5)
-        Entry(frame).grid(row=0, column=1, pady=5, padx=5)
+        self.__width = Entry(frame).grid(row=0, column=1, pady=5, padx=5)
         Label(frame, text="Height:").grid(row=1, column=0, padx=5, pady=5)
-        Entry(frame).grid(row=1, column=1, pady=5, padx=5)
-        Label(frame, text="Walls?").grid(row=2, column=0, padx=5, pady=5)
+        self.__height = Entry(frame).grid(row=1, column=1, pady=5, padx=5)
+        Label(frame, text="Number of Players:").grid(row=2, column=0, padx=5, pady=5)
+        self.__numPlayers = Entry(frame).grid(row=2, column=1, padx=5, pady=5)
+        Label(frame, text="Walls?").grid(row=3, column=0, padx=5, pady=5)
         global walls_var
         walls_var = False
         self.__walls_switch = Button(frame, text="Off", bg="grey", fg="red", command=self.walls_toggle)
-        self.__walls_switch.grid(row=2, column=1, padx=5, pady=5)
-        Button(frame, text="Create New Game", command=self.__GameWin).grid(row=3, columnspan=2, padx=5, pady=5)
+        self.__walls_switch.grid(row=3, column=1, padx=5, pady=5)
+        Button(frame, text="Create New Game", command=self.__GameWin).grid(row=4, columnspan=2, padx=5, pady=5)
 
         frame.pack()
 
@@ -98,7 +100,13 @@ class GUI(UI):
         pass # displays settings window
 
     def __GameWin(self):
-        self.__CurrentGame = Game()
+        width = int(self.__width.get())
+        height = int(self.__height.get())
+        numPlayers = int(self.__numPlayers.get())
+        Names = []
+        for i in range(numPlayers):
+            Names.append(input(f"Enter the name for player {i}: "))
+        self.__Game = Game((width, height), numPlayers, Names)
 
     def __showHelpMain(self):
         window = Toplevel(self.__root)
