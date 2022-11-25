@@ -72,30 +72,28 @@ class GUI(UI):
         self.__NewGamewindow = Toplevel(self.__root)
         self.__NewGamewindow.title("Game Creation Menu")
         frame = Frame(self.__NewGamewindow)
-        
+        frame.grid(row=0,column=0)
         Label(frame, text="Width:").grid(row=0, column=0, padx=5, pady=5)
         self.__width = Entry(frame).grid(row=0, column=1, pady=5, padx=5)
         Label(frame, text="Height:").grid(row=1, column=0, padx=5, pady=5)
         self.__height = Entry(frame).grid(row=1, column=1, pady=5, padx=5)
         Label(frame, text="Number of Players:").grid(row=2, column=0, padx=5, pady=5)
         self.__numPlayersEntry = Entry(frame).grid(row=2, column=1, padx=5, pady=5)
-        self.__numPlayers = int(self.__numPlayersEntry.get())
         Label(frame, text="Walls?").grid(row=3, column=0, padx=5, pady=5)
-        global walls_var
-        walls_var = False
+        self.__walls_var = False
         self.__walls_switch = Button(frame, text="Off", bg="grey", fg="red", command=self.walls_toggle)
         self.__walls_switch.grid(row=3, column=1, padx=5, pady=5)
         Button(frame, text="Create New Game", command=self.__GetNames).grid(row=4, columnspan=2, padx=5, pady=5)
 
-        frame.pack()
+
 
     def walls_toggle(self): #switch method 
-        if not walls_var:
+        if not self.__walls_var:
             self.__walls_switch.config(text="on", bg="white", fg="green")
-            walls_var = True
-        if walls_var:
+            self.__walls_var = True
+        if self.__walls_var:
             self.__walls_switch.config(text="Off", bg="grey", fg="red")
-            walls_var = False
+            self.__walls_var = False
 
     def __Settings(self):
         # displays settings window
@@ -108,9 +106,14 @@ class GUI(UI):
     def __GetNames(self):
         window = Toplevel(self.__NewGamewindow)
         frame = Frame(window)
-        for i in range(self.__numPlayers):
+        frame.pack()
+        self.__NumPlayers = self.__numPlayersEntry.get()
+        self.__NamesEntries = []
+        for i in range(self.__NumPlayers):
             Label(frame, text=f"Name for Player {i}").grid(row=i, column=0, padx=5, pady=5)
-        
+            self.__NamesEntries.append(Entry(frame).grid(row=i, column=1, padx=5, pady=5))
+        Button(frame, text="Confirm", command=self.__GameWin).grid(row=len(self.__NamesEntries), columnspan=2, padx=5, pady=5)        
+
     #make an netry for each player
     #add player names to list
     #create list of player initials from player[i][0]
@@ -118,14 +121,20 @@ class GUI(UI):
     #claim box with player initial
     #add colour later
 
+
     def __GameWin(self):
         width = int(self.__width.get())
         height = int(self.__height.get())
-        numPlayers = int(self.__numPlayers.get())
+        numPlayers = int(self.__NumPlayers)
         Names = []
         for i in range(numPlayers):
-            Names.append(input(f"Enter the name for player {i}: "))
+            Names.append(self.__NamesEntries[i].get())
         self.__Game = Game((width, height), numPlayers, Names)
+        self.__GameWindow = Toplevel(self.__root)
+        self.__root.title("Game Window")
+        frame = Frame(self.__GameWindow)
+
+        frame.pack()
 
     def __showHelpMain(self):
         window = Toplevel(self.__root)
