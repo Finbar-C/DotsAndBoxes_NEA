@@ -121,6 +121,13 @@ class GUI(UI):
     #claim box with player initial
     #add colour later
 
+    def __Place(self, row, col):
+        pass
+
+    def __PlayTurn(self):
+        pass
+        #take data from buttons to give to place. use true / false return to decide on try again and turn cont.
+
 
     def __GameWin(self):
         width = int(self.__width.get())
