@@ -7,6 +7,14 @@ class Board():
     H_LINE = "--"
     V_LINE = "|"
 
+    #############################################
+    #                                           #
+    # Skill Set A - List Operations             #
+    # Creation, editing and data extraction from#
+    # multi-dimensional list                    #
+    #                                           #
+    #############################################
+
     def __init__(self, rows: int, cols: int):
         self.__grid = [[(Board.EMPTY, Board.EMPTY, Board.EMPTY, Board.EMPTY) for _ in range(cols)] for _ in range(rows)]
         self.__claimed = [[Board.EMPTY for _ in range(cols)] for _ in range(rows)]
@@ -56,6 +64,12 @@ class Board():
             return 2
         elif dir.upper() == "W":
             return 3
+    
+    def getDataPoint(self, row, col, dir):
+        dir = self.directionConvert(dir)
+        if self.__grid[row][col][dir] == Board.EMPTY:
+            return 0
+        return 1
     
     def checkLine(self, pos: tuple, dir: int):
         if (self.__grid[pos[0]][pos[1]])[dir] == Board.EMPTY:
@@ -134,6 +148,9 @@ class Game():
             self.players.append(x)
         self.__turn = 0
     
+    def getDataPoint(self, row, col, dir):
+        self.__board.getDataPoint(row, col, dir)
+
     @property
     def getTurn(self):
         return self.__turn

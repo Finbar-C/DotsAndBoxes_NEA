@@ -63,6 +63,8 @@ class GUI(UI):
         console.config(yscrollcommand=scroll.set)
         self.__console = console
 
+    def getEntryData(self, entry):
+        return entry.get()
 
     
     def run(self):
@@ -74,11 +76,14 @@ class GUI(UI):
         frame = Frame(self.__NewGamewindow)
         frame.grid(row=0,column=0)
         Label(frame, text="Width:").grid(row=0, column=0, padx=5, pady=5)
-        self.__width = Entry(frame).grid(row=0, column=1, pady=5, padx=5)
+        self.__width = Entry(frame)
+        self.__width.grid(row=0, column=1, pady=5, padx=5)
         Label(frame, text="Height:").grid(row=1, column=0, padx=5, pady=5)
-        self.__height = Entry(frame).grid(row=1, column=1, pady=5, padx=5)
+        self.__height = Entry(frame)
+        self.__height.grid(row=1, column=1, pady=5, padx=5)
         Label(frame, text="Number of Players:").grid(row=2, column=0, padx=5, pady=5)
-        self.__numPlayersEntry = Entry(frame).grid(row=2, column=1, padx=5, pady=5)
+        self.numPlayersEntry = Entry(frame)
+        self.numPlayersEntry.grid(row=2, column=1, padx=5, pady=5)
         Label(frame, text="Walls?").grid(row=3, column=0, padx=5, pady=5)
         self.__walls_var = False
         self.__walls_switch = Button(frame, text="Off", bg="grey", fg="red", command=self.walls_toggle)
@@ -104,14 +109,15 @@ class GUI(UI):
         frame.pack()
 
     def __GetNames(self):
+        self.__NumPlayers = int(self.getEntryData(self.numPlayersEntry))
+        self.__NamesEntries = []
         window = Toplevel(self.__NewGamewindow)
         frame = Frame(window)
         frame.pack()
-        self.__NumPlayers = self.__numPlayersEntry.get()
-        self.__NamesEntries = []
         for i in range(self.__NumPlayers):
-            Label(frame, text=f"Name for Player {i}").grid(row=i, column=0, padx=5, pady=5)
-            self.__NamesEntries.append(Entry(frame).grid(row=i, column=1, padx=5, pady=5))
+            Label(frame, text=f"Name for Player {i+1}").grid(row=i, column=0, padx=5, pady=5)
+            self.__NamesEntries.append(Entry(frame))
+            self.__NamesEntries[i].grid(row=i, column=1, padx=5, pady=5)
         Button(frame, text="Confirm", command=self.__GameWin).grid(row=len(self.__NamesEntries), columnspan=2, padx=5, pady=5)        
 
     #make an netry for each player
@@ -142,6 +148,15 @@ class GUI(UI):
         frame = Frame(self.__GameWindow)
 
         frame.pack()
+        boxes = [[] for _ in range(height)]
+        for i in range(width):
+            for j in range(height):
+                frame = []
+                frame.append(Frame)
+                boxes[i].append(frame)
+                boxes[i][j][0].pack # frame item at 0, corner 1, top 2, left 3, centre 4, right and bottom edges follow on edge boxes
+                boxes[i][j].append(Label(boxes[i][j][0], text=" ", bg="black"))
+                boxes[i][j][1].grid(row=0,column=0,width=5,height=5)
 
     def __showHelpMain(self):
         window = Toplevel(self.__root)
