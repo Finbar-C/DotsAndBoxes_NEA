@@ -55,6 +55,12 @@ class Board():
                     
             #go box by box, check each side
     
+    
+    def getBoxExists(self, pos: tuple):
+        if self.__claimed[pos[0]][pos[1]] == Board.EMPTY:
+            return -1
+        return self.__claimed[pos[0]][pos[1]]
+    
     def directionConvert(self, dir:str):
         if dir.upper() == "N":
             return 0
@@ -151,9 +157,15 @@ class Game():
     def getDataPoint(self, row, col, dir):
         self.__board.getDataPoint(row, col, dir)
 
+    def checkClear(self, pos: tuple, dir: str):
+        self.__board.checkClear(pos, dir)
+
     @property
     def getTurn(self):
         return self.__turn
+    
+    def getBoxExists(self, pos: tuple):
+        return self.__board.getBoxExists(pos)
 
     def place(self, pos: tuple, dir: str):
         boxCreated = False

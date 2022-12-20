@@ -62,6 +62,7 @@ class GUI(UI):
         scroll.config(command=console.yview)
         console.config(yscrollcommand=scroll.set)
         self.__console = console
+        self.__currentPlayer = 0
 
     def getEntryData(self, entry):
         return entry.get()
@@ -127,36 +128,139 @@ class GUI(UI):
     #claim box with player initial
     #add colour later
 
-    def __Place(self, row, col):
-        pass
+    def __Place(self, row, col, dir):
+        bc = self.__Game.place((row, col), dir)
+        return bc
+
 
     def __PlayTurn(self):
-        pass
+        row = self.__yRefEntry.get()
+        col = self.__xRefEntry.get()
+        direc = self.__sideRefEntry.get()
+        if int(row) > self.__height or int(row) < 1:
+            return
+        if int(col) > self.__width or int(col) < 1:
+            return
+        row = int(row) - 1
+        col = int(col) - 1
+        validU = ["top", "charm", "up", "north", "n"]
+        validL = ["left", "l", "west", "w"]
+        validR = ["right", "r", "east", "e"]
+        validD = ["bottom", "strange", "down", "south", "s"]
         #take data from buttons to give to place. use true / false return to decide on try again and turn cont.
+        direc = direc.lower()
+        if direc not in validU and direc not in validL and direc not in validR and direc not in validD:
+            return
+        if direc in validU:
+            if not self.__Game.checkClear((row, col), "N"):
+                return
+            bc = self.__Place(row, col, "N")
+            direc = "N"
+        elif direc in validL:
+            if not self.__Game.checkClear((row, col), "W"):
+                return
+            bc = self.__Place(row, col, "W")
+            direc = "W"
+        elif direc in validR:
+            if not self.__Game.checkClear((row, col), "E"):
+                return
+            bc = self.__Place(row, col, "E")
+            direc = "E"
+        elif direc in validD:
+            if not self.__Game.checkClear((row, col), "S"):
+                return
+            bc = self.__Place(row, col, "S")
+            direc = "S"
+        
+        if direc == "N":
+            self.__boxes[col][row][2].configure(bg="black")
+        elif direc == "W":
+            self.__boxes[col][row][3].configure(bg="black")
+        else:
+            if direc == "E" and col + 1 == self.__width:
+                self.__boxes[col][row][6].configure(bg="black")
+            elif direc == "S" and row + 1 == self.__height:
+                self.__boxes[col][row][8].configure(bg="black")
+            else:
+                if direc == "E":
+                    self.__boxes[col+1][row][3].configure(bg="black")
+                elif direc == "S":
+                    self.__boxes[col][row+1][2].configure(bg="black")
 
+        if bc:
+            pass
+        return
 
     def __GameWin(self):
         width = int(self.__width.get())
+        self.__width = width
         height = int(self.__height.get())
+        self.__height = height
         numPlayers = int(self.__NumPlayers)
-        Names = []
+        self.__Names = []
         for i in range(numPlayers):
-            Names.append(self.__NamesEntries[i].get())
-        self.__Game = Game((width, height), numPlayers, Names)
+            self.__Names.append(self.__NamesEntries[i].get())
+        currentplayer = self.__Names[self.__currentPlayer]
+        self.__Game = Game((width, height), numPlayers, self.__Names)
         self.__GameWindow = Toplevel(self.__root)
-        self.__root.title("Game Window")
-        frame = Frame(self.__GameWindow)
+        self.__GameWindow.title("Game Window")
+        topframe = Frame(self.__GameWindow)
 
-        frame.pack()
-        boxes = [[] for _ in range(height)]
+        topframe.pack(padx=15, pady=15)
+        self.__NewGamewindow.destroy()
+        gridframe = Frame(topframe)
+        gridframe.grid(row=0, column=0)
+        self.__boxes = [[] for _ in range(height)]
         for i in range(width):
             for j in range(height):
                 frame = []
-                frame.append(Frame)
-                boxes[i].append(frame)
-                boxes[i][j][0].pack # frame item at 0, corner 1, top 2, left 3, centre 4, right and bottom edges follow on edge boxes
-                boxes[i][j].append(Label(boxes[i][j][0], text=" ", bg="black"))
-                boxes[i][j][1].grid(row=0,column=0,width=5,height=5)
+                frame.append(Frame(gridframe))
+                self.__boxes[i].append(frame)
+                self.__boxes[i][j][0].grid(row=j,column=i) # frame item at 0, corner 1, top 2, left 3, centre 4, right and bottom edges follow on edge self.__boxes
+                self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text=" ", bg="black"))
+                self.__boxes[i][j][1].grid(row=0,column=0, padx=1, pady=1)
+                self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text="       ", bg="grey"))
+                self.__boxes[i][j][2].grid(row=0,column=1, padx=1, pady=1)
+                self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text=" \n \n ", bg="grey"))
+                self.__boxes[i][j][3].grid(row=1,column=0, padx=1, pady=1)
+                self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text="      \n      \n      ", bg="white"))
+                self.__boxes[i][j][4].grid(row=1,column=1, padx=1, pady=1)
+                if i+1 == width:
+                    self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text=" ", bg="black"))
+                    self.__boxes[i][j][5].grid(row=0,column=2, padx=1, pady=1)
+                    self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text=" \n \n ", bg="grey"))
+                    self.__boxes[i][j][6].grid(row=1,column=2, padx=1, pady=1)
+                else:
+                    self.__boxes[i][j].append(None)
+                    self.__boxes[i][j].append(None)
+                if j+1 == height:
+                    self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text=" ", bg="black"))
+                    self.__boxes[i][j][7].grid(row=2,column=0, padx=1, pady=1)
+                    self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text="      ", bg="grey"))
+                    self.__boxes[i][j][8].grid(row=2,column=1, padx=1, pady=1)
+                else:
+                    self.__boxes[i][j].append(None)
+                    self.__boxes[i][j].append(None)
+                if i+1 == width and j+1 == height:
+                    self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text=" ", bg="black"))
+                    self.__boxes[i][j][9].grid(row=2,column=2, padx=1, pady=1)
+                else:
+                    self.__boxes[i][j].append(None)
+        buttonframe = Frame(topframe)
+        buttonframe.grid(row=1, column=0)
+        self.__turndisplay = Label(buttonframe, text=f"Current player is {currentplayer}")
+        self.__turndisplay.grid(row=0, columnspan=3)
+        Label(buttonframe, text="Enter Row below").grid(row=1,column=0, padx=5, pady=5)
+        self.__yRefEntry = Entry(buttonframe)
+        self.__yRefEntry.grid(row=2, column=0, padx=5, pady=5)
+        Label(buttonframe, text="Enter Column below").grid(row=1, column=1, padx=5, pady=5)
+        self.__xRefEntry = Entry(buttonframe)
+        self.__xRefEntry.grid(row=2, column=1, padx=5, pady=5)
+        Label(buttonframe, text="Enter side below").grid(row=1, column=2, padx=5, pady=5)
+        self.__sideRefEntry = Entry(buttonframe)
+        self.__sideRefEntry.grid(row=2, column=2, padx=5, pady=5)
+        Button(buttonframe, text="Submit", command=self.__PlayTurn).grid(row=3,column=2, padx=5, pady=5)
+        Button(buttonframe, text="Help", command=self.__showHelpGame).grid(row=3, column=0, padx=5, pady=5)
 
     def __showHelpMain(self):
         window = Toplevel(self.__root)
@@ -169,6 +273,9 @@ class GUI(UI):
         frame.pack(side=LEFT, fill=Y)
         scroll.config(command=frame.yview)
         window.config(yscrollcommand=scroll.set)
+    
+    def __showHelpGame(self):
+        pass
 
     def __Exit(self):
         self.__root.quit()
