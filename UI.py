@@ -129,7 +129,8 @@ class GUI(UI):
     #add colour later
 
     def __Place(self, row, col, dir):
-        bc = self.__Game.place((row, col), dir)
+        pos = (row, col)
+        bc = self.__Game.place(pos, dir)
         return bc
 
 
@@ -173,19 +174,25 @@ class GUI(UI):
             direc = "S"
         
         if direc == "N":
-            self.__boxes[col][row][2].configure(bg="black")
+            self.__boxes[col][row][2] = Label(self.__boxes[col][row][0], text="      ", bg="black")
+            self.__boxes[col][row][2].grid(row=0, column = 1, padx = 1, pady = 1)
         elif direc == "W":
-            self.__boxes[col][row][3].configure(bg="black")
+            self.__boxes[col][row][3] = Label(self.__boxes[col][row][0], text=" \n \n ", bg="black")
+            self.__boxes[col][row][3].grid(row=1, column=0, padx = 1, pady = 1)
         else:
             if direc == "E" and col + 1 == self.__width:
-                self.__boxes[col][row][6].configure(bg="black")
+                self.__boxes[col][row][6] = Label(self.__boxes[col][row][0], text=" \n \n ", bg="black")
+                self.__boxes[col][row][6].grid(row=1,column=2, padx=1, pady=1)
             elif direc == "S" and row + 1 == self.__height:
-                self.__boxes[col][row][8].configure(bg="black")
+                self.__boxes[col][row][8] = Label(self.__boxes[col][row][0], text="      ", bg="black")
+                self.__boxes[col][row][8].grid(row=2,column=1, padx=1, pady=1)
             else:
                 if direc == "E":
-                    self.__boxes[col+1][row][3].configure(bg="black")
+                    self.__boxes[col+1][row][3] = Label(self.__boxes[col+1][row][0], text=" \n \n ", bg="black")
+                    self.__boxes[col+1][row][3].grid(row=1,column=0, padx=1, pady=1)
                 elif direc == "S":
-                    self.__boxes[col][row+1][2].configure(bg="black")
+                    self.__boxes[col][row+1][2] = Label(self.__boxes[col][row+1][0], text="      ", bg="black")
+                    self.__boxes[col][row+1][2].grid(row=0,column=1, padx=1, pady=1)
 
         if bc:
             pass

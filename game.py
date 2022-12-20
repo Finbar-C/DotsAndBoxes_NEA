@@ -16,7 +16,7 @@ class Board():
     #############################################
 
     def __init__(self, rows: int, cols: int):
-        self.__grid = [[(Board.EMPTY, Board.EMPTY, Board.EMPTY, Board.EMPTY) for _ in range(cols)] for _ in range(rows)]
+        self.__grid = [[[Board.EMPTY, Board.EMPTY, Board.EMPTY, Board.EMPTY] for _ in range(cols)] for _ in range(rows)]
         self.__claimed = [[Board.EMPTY for _ in range(cols)] for _ in range(rows)]
         self.__rows = rows
         self.__cols = cols
@@ -97,31 +97,31 @@ class Board():
     
     def checkClear(self, pos: tuple, dir: str):
         dir = self.directionConvert(dir)
-        if (self.__grid[pos[0]][pos[1]])[dir] == Board.EMPTY:
+        if self.__grid[pos[0]][pos[1]][dir] == Board.EMPTY:
             return True
         return False
     
     def place(self, pos: tuple, dir: str):
         dir = self.directionConvert(dir)
         if dir <= 1:
-            (self.__grid[pos[0]][pos[1]])[dir] = Board.H_LINE
+            self.__grid[pos[0]][pos[1]][dir] = Board.H_LINE
         elif dir >= 2:
-            (self.__grid[pos[0]][pos[1]])[dir] = Board.V_LINE
+            self.__grid[pos[0]][pos[1]][dir] = Board.V_LINE
     
     def MatchedPlace(self, pos: tuple, dir: str):
         dir = self.directionConvert(dir)
         if dir == 0:
             if pos[0] - 1 >= 0:
-                return (pos[0] - 1, pos[1]), "S"
+                return pos[0] - 1, pos[1], "S"
         elif dir == 1:
             if pos[0] + 1 < self.__rows:
-                return (pos[0] + 1, pos[1]), "N"
+                return pos[0] + 1, pos[1], "N"
         elif dir == 2:
             if pos[1] + 1 < self.__cols:
-                return (pos[0], pos[1] + 1), "W"
+                return pos[0], pos[1] + 1, "W"
         elif dir == 3:
             if pos[1] - 1 >= 0:
-                return (pos[0], pos[1] - 1), "E"
+                return pos[0], pos[1] - 1, "E"
     # match up placement to equivalent place in neighbouring box
 
     def ClaimBox(self, pos: tuple, pnum: int):
@@ -155,10 +155,10 @@ class Game():
         self.__turn = 0
     
     def getDataPoint(self, row, col, dir):
-        self.__board.getDataPoint(row, col, dir)
+        return self.__board.getDataPoint(row, col, dir)
 
     def checkClear(self, pos: tuple, dir: str):
-        self.__board.checkClear(pos, dir)
+        return self.__board.checkClear(pos, dir)
 
     @property
     def getTurn(self):
@@ -171,14 +171,18 @@ class Game():
         boxCreated = False
         if self.__board.checkClear(pos, dir):
             self.__board.place(pos, dir)
-            newPos, newDir = self.__board.MatchedPlace(pos, dir)
-            self.__board.place(newPos, newDir)
+            res = self.__board.MatchedPlace(pos, dir)
+            if res != None:
+                newPos = (res[0], res[1])
+                newDir = res[2]
+                self.__board.place(newPos, newDir)
+                if self.__board.checkBox(newPos):
+                    self.__board.ClaimBox(newPos, self.__turn)
+                    boxCreated = True
         if self.__board.checkBox(pos):
             self.__board.ClaimBox(pos, self.__turn)
             boxCreated = True
-        if self.__board.checkBox(newPos):
-            self.__board.ClaimBox(newPos, self.__turn)
-            boxCreated = True
+        
         return boxCreated
         
 
