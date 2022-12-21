@@ -126,6 +126,13 @@ class Board():
 
     def ClaimBox(self, pos: tuple, pnum: int):
         self.__claimed[pos[0]][pos[1]] = pnum
+    
+    def getScores(self, numPlayers: int):
+        scores = [0 for _ in range(numPlayers)]
+        for i in range(self.__rows):
+            for j in range(self.__cols):
+                scores[(self.__claimed[i][j])] += 1
+        return scores
 
 
 
@@ -160,7 +167,6 @@ class Game():
     def checkClear(self, pos: tuple, dir: str):
         return self.__board.checkClear(pos, dir)
 
-    @property
     def getTurn(self):
         return self.__turn
     
@@ -193,6 +199,10 @@ class Game():
         if self.__board.CheckFull():
             return True
         return False
+    
+    def CalculateScores(self):
+        scores = self.__board.getScores(len(self.players))
+        return scores
 
     def nextTurn(self):
         if self.__turn + 1 < len(self.players):

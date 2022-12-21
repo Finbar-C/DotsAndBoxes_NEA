@@ -62,7 +62,6 @@ class GUI(UI):
         scroll.config(command=console.yview)
         console.config(yscrollcommand=scroll.set)
         self.__console = console
-        self.__currentPlayer = 0
 
     def getEntryData(self, entry):
         return entry.get()
@@ -137,7 +136,10 @@ class GUI(UI):
     def __PlayTurn(self):
         row = self.__yRefEntry.get()
         col = self.__xRefEntry.get()
+        self.__yRefEntry.delete(0, END)
+        self.__xRefEntry.delete(0, END)
         direc = self.__sideRefEntry.get()
+        self.__sideRefEntry.delete(0,END)
         if int(row) > self.__height or int(row) < 1:
             return
         if int(col) > self.__width or int(col) < 1:
@@ -195,8 +197,48 @@ class GUI(UI):
                     self.__boxes[col][row+1][2].grid(row=0,column=1, padx=1, pady=1)
 
         if bc:
-            pass
+            if self.__Game.getBoxExists((row, col)) != -1:
+                self.__boxes[col][row][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
+                self.__boxes[col][row][4].grid(row=1,column=1, padx=1, pady=1)
+            if self.__Game.getBoxExists((row, col+1)) != -1 and direc == "E" and col+1 != self.__width:
+                self.__boxes[col+1][row][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
+                self.__boxes[col+1][row][4].grid(row=1,column=1, padx=1, pady=1)
+            if self.__Game.getBoxExists((row+1, col)) != -1 and direc == "S" and row+1 != self.__height:
+                self.__boxes[col][row+1][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
+                self.__boxes[col][row+1][4].grid(row=1,column=1, padx=1, pady=1)
+            if self.__Game.getBoxExists((row, col-1)) != -1 and direc == "W" and col != 0:
+                self.__boxes[col-1][row][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
+                self.__boxes[col-1][row][4].grid(row=1,column=1, padx=1, pady=1)
+            if self.__Game.getBoxExists((row-1, col)) != -1 and direc == "N" and row != 0:
+                self.__boxes[col][row-1][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
+                self.__boxes[col][row-1][4].grid(row=1,column=1, padx=1, pady=1)
+
+        if not self.__Game.End():
+            self.__Game.nextTurn()
+            x = self.__getTurn()
+            self.__currentplayer = self.__Names[x]
+            self.__turndisplay.config(text=f"Current player is {self.__currentplayer}")
+            self.__turndisplay.grid(row=0, columnspan=3)
+        else:
+            self.__EndGame()
         return
+
+    def __EndGame(self):
+        window = Toplevel(self.__GameWindow)
+        window.title("Results")
+        frame = Frame(window)
+        frame.pacK()
+        scores = self.__Game.CalculateScores()
+        winner = -1
+        maximum = 0
+        for i in range(len(scores)):
+            if scores[i] > maximum:
+                winner = i
+                maximum = scores[i]
+        Label(frame, text=f"{self.__Names[winner]} won with {maximum} claimed squares!")
+
+    def __getTurn(self):
+        return self.__Game.getTurn()
 
     def __GameWin(self):
         width = int(self.__width.get())
@@ -207,11 +249,12 @@ class GUI(UI):
         self.__Names = []
         for i in range(numPlayers):
             self.__Names.append(self.__NamesEntries[i].get())
-        currentplayer = self.__Names[self.__currentPlayer]
         self.__Game = Game((width, height), numPlayers, self.__Names)
         self.__GameWindow = Toplevel(self.__root)
         self.__GameWindow.title("Game Window")
+        self.__currentplayer = self.__Names[0]
         topframe = Frame(self.__GameWindow)
+
 
         topframe.pack(padx=15, pady=15)
         self.__NewGamewindow.destroy()
@@ -255,7 +298,7 @@ class GUI(UI):
                     self.__boxes[i][j].append(None)
         buttonframe = Frame(topframe)
         buttonframe.grid(row=1, column=0)
-        self.__turndisplay = Label(buttonframe, text=f"Current player is {currentplayer}")
+        self.__turndisplay = Label(buttonframe, text=f"Current player is {self.__currentplayer}")
         self.__turndisplay.grid(row=0, columnspan=3)
         Label(buttonframe, text="Enter Row below").grid(row=1,column=0, padx=5, pady=5)
         self.__yRefEntry = Entry(buttonframe)
