@@ -4,6 +4,7 @@ from accounts import *
 from tkinter import *
 from itertools import product
 from abc import ABC, abstractmethod
+from AI import Move
 
 class UI():
 
@@ -51,7 +52,8 @@ class GUI(UI):
         frame = Frame(self.__root)
         frame.pack()
         Button(frame, text="Help", command=self.__showHelpMain).pack(fill=X)
-        Button(frame, text="New Game", command=self.__NewGame).pack(fill=X)
+        Button(frame, text="Play Multiplayer", command=self.__NewGame).pack(fill=X)
+        Button(frame, text="Play vs AI", command=self.__AiGame).pack(fill=X)
         Button(frame, text="Options", command=self.__Settings).pack(fill=X)
         Button(frame, text="Exit", command=self.__Exit).pack(fill=X)
 
@@ -69,10 +71,13 @@ class GUI(UI):
     
     def run(self):
         self.__root.mainloop()
+    
+    def __AiGame(self):
+        pass
 
     def __NewGame(self):
         self.__NewGamewindow = Toplevel(self.__root)
-        self.__NewGamewindow.title("Game Creation Menu")
+        self.__NewGamewindow.title("Multiplayer Game Creation Menu")
         frame = Frame(self.__NewGamewindow)
         frame.grid(row=0,column=0)
         Label(frame, text="Width:").grid(row=0, column=0, padx=5, pady=5)
@@ -111,6 +116,7 @@ class GUI(UI):
     def __GetNames(self):
         self.__NumPlayers = int(self.getEntryData(self.numPlayersEntry))
         self.__NamesEntries = []
+        self.__types = []
         window = Toplevel(self.__NewGamewindow)
         frame = Frame(window)
         frame.pack()
@@ -118,6 +124,7 @@ class GUI(UI):
             Label(frame, text=f"Name for Player {i+1}").grid(row=i, column=0, padx=5, pady=5)
             self.__NamesEntries.append(Entry(frame))
             self.__NamesEntries[i].grid(row=i, column=1, padx=5, pady=5)
+            self.__types.append["P"]
         Button(frame, text="Confirm", command=self.__GameWin).grid(row=len(self.__NamesEntries), columnspan=2, padx=5, pady=5)        
 
     #make an netry for each player
@@ -249,7 +256,8 @@ class GUI(UI):
         self.__Names = []
         for i in range(numPlayers):
             self.__Names.append(self.__NamesEntries[i].get())
-        self.__Game = Game((width, height), numPlayers, self.__Names)
+
+        self.__Game = Game((width, height), numPlayers, self.__Names, self.__types)
         self.__GameWindow = Toplevel(self.__root)
         self.__GameWindow.title("Game Window")
         self.__currentplayer = self.__Names[0]

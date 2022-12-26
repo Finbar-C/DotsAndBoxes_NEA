@@ -140,9 +140,13 @@ class Board():
             
 
 class Player():
-    def __init__(self, name: str):
+    def __init__(self, name: str, type: str):
         self.__name = name
         self.__claimedBoxes = 0
+        self.__type = type[0]
+        self.__difficulty = None
+        if self.__type == "C": #C = Computer, P = Person / Player
+            self.__difficulty =int(type[1]) #0=random, 1=easy, 2=medium, 3=hard
     
     def addBox(self):
         self.__claimedBoxes += 1
@@ -150,14 +154,20 @@ class Player():
     @property
     def getName(self):
         return self.__name
+    
+    def getType(self):
+        return self.__type
+    
+    def getDifficulty(self):
+        return self.__difficulty
 
 class Game():
 
-    def __init__(self, dims: tuple, pnum: int, names: list):
+    def __init__(self, dims: tuple, pnum: int, names: list, types: list):
         self.__board = Board(dims[0], dims[1])
         self.players = []
         for i in range(pnum):
-            x = Player(names[i])
+            x = Player(names[i], types[i])
             self.players.append(x)
         self.__turn = 0
     
