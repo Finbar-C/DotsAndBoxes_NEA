@@ -139,6 +139,18 @@ class Board():
 
     def getCols(self):
         return self.__cols
+    
+    def ReturnAvailable(self):
+        Available = []
+        for i in range(self.__rows):
+            for j in range(self.__cols):
+                for k in range(4):
+                    if self.__grid[i][j][k] == Board.EMPTY:
+                        dirs = ["N", "S", "E", "W"]
+                        direc = dirs[k]
+
+                        Available.append((i, j, direc))
+        return Available
 
 
 
@@ -226,5 +238,8 @@ class Game():
             self.__turn += 1
         elif self.__turn +1 == len(self.players):
             self.__turn = 0
+    
+    def ReturnAvailable(self):
+        return self.__board.ReturnAvailable()
 
 

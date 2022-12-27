@@ -1,4 +1,5 @@
 from game import *
+import random
 # add return moves to board class
 def MoveDif(Game):
     pass
@@ -10,9 +11,13 @@ def MoveEasy(Game):
     pass
 
 def MoveRan(Game):
-    pass
+    opts = Game.ReturnAvailable()
+    length = len(opts)
+    choice = random.randint(0, length-1)
+    move = opts[choice]
+    return move
 
-def Move(Difficulty, Game):
+def Move(Difficulty: int, Game: Game):
     if Difficulty == 0:
         return MoveRan(Game)
     elif Difficulty == 1:

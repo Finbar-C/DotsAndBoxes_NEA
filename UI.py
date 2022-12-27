@@ -64,6 +64,7 @@ class GUI(UI):
         scroll.config(command=console.yview)
         console.config(yscrollcommand=scroll.set)
         self.__console = console
+        self.__Names = []
 
     def getEntryData(self, entry):
         return entry.get()
@@ -73,9 +74,9 @@ class GUI(UI):
         self.__root.mainloop()
     
     def __AiGame(self):
-        self.__AiCreationWindow = Toplevel(self.__root)
-        self.__AiCreationWindow.title("AI Game Creation Menu")
-        frame = Frame(self.__AiCreationWindow)
+        self.__NewGamewindow = Toplevel(self.__root)
+        self.__NewGamewindow.title("AI Game Creation Menu")
+        frame = Frame(self.__NewGamewindow)
         frame.pack()
         Label(frame, text="Width:").grid(row=0, column=0, padx=5, pady=5)
         self.__width = Entry(frame)
@@ -84,22 +85,35 @@ class GUI(UI):
         self.__height = Entry(frame)
         self.__height.grid(row=1, column=1, pady=5, padx=5)
         Label(frame, text="Difficulty:").grid(row=2, columnspan=2, padx=5, pady=5)
-        Button(frame, text="Random", command=self.__random).grid(row=3, column=0, padx=5, pady=5)
-        Button(frame, text="Easy", command=self.__easy).grid(row=3, column=1, padx=5, pady=5)
-        Button(frame, text="Medium", command=self.__medium).grid(row=4, column=0, padx=5, pady=5)
-        Button(frame, text="Difficult", command=self.__difficult).grid(row=4, column=1, padx=5, pady=5)
+        Button(frame, text="Random", command=self.__random).grid(row=3, column=0, padx=5, pady=5, columnspan=1)
+        Button(frame, text="Easy", command=self.__easy).grid(row=3, column=1, padx=5, pady=5, columnspan=1)
+        Button(frame, text="Medium", command=self.__medium).grid(row=4, column=0, padx=5, pady=5, columnspan=1)
+        Button(frame, text="Difficult", command=self.__difficult).grid(row=4, column=1, padx=5, pady=5, columnspan=1)
 
     def __random(self):
-        pass
+        self.__NumPlayers = 2
+        self.__Names = ["Player", "RandomAI"]
+        self.__types = ["P", "C0"]
+        self.__GameWin()
+
 
     def __easy(self):
-        pass
+        self.__NumPlayers = 2
+        self.__Names = ["Player", "EasyAI"]
+        self.__types = ["P", "C1"]
+        self.__GameWin()
 
     def __medium(self):
-        pass
+        self.__NumPlayers = 2
+        self.__Names = ["Player", "MediumAI"]
+        self.__types = ["P", "C2"]
+        self.__GameWin()
 
     def __difficult(self):
-        pass
+        self.__NumPlayers = 2
+        self.__Names = ["Player", "DifficultAI"]
+        self.__types = ["P", "C3"]
+        self.__GameWin()
 
     def __NewGame(self):
         self.__NewGamewindow = Toplevel(self.__root)
@@ -167,18 +181,29 @@ class GUI(UI):
 
 
     def __PlayTurn(self):
-        row = self.__yRefEntry.get()
-        col = self.__xRefEntry.get()
-        self.__yRefEntry.delete(0, END)
-        self.__xRefEntry.delete(0, END)
-        direc = self.__sideRefEntry.get()
-        self.__sideRefEntry.delete(0,END)
-        if int(row) > self.__height or int(row) < 1:
-            return
-        if int(col) > self.__width or int(col) < 1:
-            return
-        row = int(row) - 1
-        col = int(col) - 1
+        turn = self.__Game.getTurn()
+        if self.__Game.players[turn].getType() == "P":
+
+            row = self.__yRefEntry.get()
+            col = self.__xRefEntry.get()
+            self.__yRefEntry.delete(0, END)
+            self.__xRefEntry.delete(0, END)
+            direc = self.__sideRefEntry.get()
+            self.__sideRefEntry.delete(0,END)
+            if int(row) > self.__height or int(row) < 1:
+                return
+            if int(col) > self.__width or int(col) < 1:
+                return
+            row = int(row) - 1
+            col = int(col) - 1
+        
+        elif self.__Game.players[turn].getType() == "C":
+            diff = self.__Game.players[turn].getDifficulty()
+            move = Move(diff, self.__Game)
+            row = move[0]
+            col = move[1]
+            direc = move[2]
+
         validU = ["top", "charm", "up", "north", "n"]
         validL = ["left", "l", "west", "w"]
         validR = ["right", "r", "east", "e"]
@@ -285,9 +310,11 @@ class GUI(UI):
         height = int(self.__height.get())
         self.__height = height
         numPlayers = int(self.__NumPlayers)
-        self.__Names = []
-        for i in range(numPlayers):
-            self.__Names.append(self.__NamesEntries[i].get())
+        
+        if len(self.__Names) == 0:
+            self.__Names = []
+            for i in range(numPlayers):
+                self.__Names.append(self.__NamesEntries[i].get())
 
         self.__Game = Game((width, height), numPlayers, self.__Names, self.__types)
         self.__GameWindow = Toplevel(self.__root)
