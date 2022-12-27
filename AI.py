@@ -1,3 +1,4 @@
+from game import *
 # add return moves to board class
 def MoveDif(Game):
     pass

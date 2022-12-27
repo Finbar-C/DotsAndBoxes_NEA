@@ -133,6 +133,12 @@ class Board():
             for j in range(self.__cols):
                 scores[(self.__claimed[i][j])] += 1
         return scores
+    
+    def getRows(self):
+        return self.__rows
+
+    def getCols(self):
+        return self.__cols
 
 
 
@@ -189,12 +195,13 @@ class Game():
             self.__board.place(pos, dir)
             res = self.__board.MatchedPlace(pos, dir)
             if res != None:
-                newPos = (res[0], res[1])
-                newDir = res[2]
-                self.__board.place(newPos, newDir)
-                if self.__board.checkBox(newPos):
-                    self.__board.ClaimBox(newPos, self.__turn)
-                    boxCreated = True
+                if res[0] != -1 and res[0] < self.__board.getRows() and res[1] != -1 and res[1] < self.__board.getCols():
+                    newPos = (res[0], res[1])
+                    newDir = res[2]
+                    self.__board.place(newPos, newDir)
+                    if self.__board.checkBox(newPos):
+                        self.__board.ClaimBox(newPos, self.__turn)
+                        boxCreated = True
         if self.__board.checkBox(pos):
             self.__board.ClaimBox(pos, self.__turn)
             boxCreated = True

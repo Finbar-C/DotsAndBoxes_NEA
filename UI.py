@@ -73,6 +73,32 @@ class GUI(UI):
         self.__root.mainloop()
     
     def __AiGame(self):
+        self.__AiCreationWindow = Toplevel(self.__root)
+        self.__AiCreationWindow.title("AI Game Creation Menu")
+        frame = Frame(self.__AiCreationWindow)
+        frame.pack()
+        Label(frame, text="Width:").grid(row=0, column=0, padx=5, pady=5)
+        self.__width = Entry(frame)
+        self.__width.grid(row=0, column=1, pady=5, padx=5)
+        Label(frame, text="Height:").grid(row=1, column=0, padx=5, pady=5)
+        self.__height = Entry(frame)
+        self.__height.grid(row=1, column=1, pady=5, padx=5)
+        Label(frame, text="Difficulty:").grid(row=2, columnspan=2, padx=5, pady=5)
+        Button(frame, text="Random", command=self.__random).grid(row=3, column=0, padx=5, pady=5)
+        Button(frame, text="Easy", command=self.__easy).grid(row=3, column=1, padx=5, pady=5)
+        Button(frame, text="Medium", command=self.__medium).grid(row=4, column=0, padx=5, pady=5)
+        Button(frame, text="Difficult", command=self.__difficult).grid(row=4, column=1, padx=5, pady=5)
+
+    def __random(self):
+        pass
+
+    def __easy(self):
+        pass
+
+    def __medium(self):
+        pass
+
+    def __difficult(self):
         pass
 
     def __NewGame(self):
@@ -124,7 +150,7 @@ class GUI(UI):
             Label(frame, text=f"Name for Player {i+1}").grid(row=i, column=0, padx=5, pady=5)
             self.__NamesEntries.append(Entry(frame))
             self.__NamesEntries[i].grid(row=i, column=1, padx=5, pady=5)
-            self.__types.append["P"]
+            self.__types.append("P")
         Button(frame, text="Confirm", command=self.__GameWin).grid(row=len(self.__NamesEntries), columnspan=2, padx=5, pady=5)        
 
     #make an netry for each player
@@ -207,12 +233,14 @@ class GUI(UI):
             if self.__Game.getBoxExists((row, col)) != -1:
                 self.__boxes[col][row][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
                 self.__boxes[col][row][4].grid(row=1,column=1, padx=1, pady=1)
-            if self.__Game.getBoxExists((row, col+1)) != -1 and direc == "E" and col+1 != self.__width:
-                self.__boxes[col+1][row][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
-                self.__boxes[col+1][row][4].grid(row=1,column=1, padx=1, pady=1)
-            if self.__Game.getBoxExists((row+1, col)) != -1 and direc == "S" and row+1 != self.__height:
-                self.__boxes[col][row+1][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
-                self.__boxes[col][row+1][4].grid(row=1,column=1, padx=1, pady=1)
+            if col+1 != self.__width:
+                if self.__Game.getBoxExists((row, col+1)) != -1 and direc == "E" and col+1 != self.__width:
+                    self.__boxes[col+1][row][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
+                    self.__boxes[col+1][row][4].grid(row=1,column=1, padx=1, pady=1)
+            if row+1 != self.__height:
+                if self.__Game.getBoxExists((row+1, col)) != -1 and direc == "S" and row+1 != self.__height:
+                   self.__boxes[col][row+1][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
+                   self.__boxes[col][row+1][4].grid(row=1,column=1, padx=1, pady=1)
             if self.__Game.getBoxExists((row, col-1)) != -1 and direc == "W" and col != 0:
                 self.__boxes[col-1][row][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
                 self.__boxes[col-1][row][4].grid(row=1,column=1, padx=1, pady=1)
@@ -231,10 +259,10 @@ class GUI(UI):
         return
 
     def __EndGame(self):
-        window = Toplevel(self.__GameWindow)
-        window.title("Results")
-        frame = Frame(window)
-        frame.pacK()
+        self.__GameEndWindow = Toplevel(self.__GameWindow)
+        self.__GameEndWindow.title("Results")
+        frame = Frame(self.__GameEndWindow)
+        frame.pack()
         scores = self.__Game.CalculateScores()
         winner = -1
         maximum = 0
@@ -242,7 +270,11 @@ class GUI(UI):
             if scores[i] > maximum:
                 winner = i
                 maximum = scores[i]
-        Label(frame, text=f"{self.__Names[winner]} won with {maximum} claimed squares!")
+        Label(frame, text=f"{self.__Names[winner]} won with {maximum} claimed squares!").pack()
+        Button(frame, text="Return to Menu", command=self.__EndGameDestroy).pack()
+    
+    def __EndGameDestroy(self):
+        self.__GameWindow.destroy()
 
     def __getTurn(self):
         return self.__Game.getTurn()
