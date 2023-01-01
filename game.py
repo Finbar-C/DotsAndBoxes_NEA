@@ -142,14 +142,18 @@ class Board():
     
     def ReturnAvailable(self):
         Available = []
+        reject = []
         for i in range(self.__rows):
             for j in range(self.__cols):
                 for k in range(4):
                     if self.__grid[i][j][k] == Board.EMPTY:
                         dirs = ["N", "S", "E", "W"]
                         direc = dirs[k]
-
-                        Available.append((i, j, direc))
+                        test = (i, j, direc)
+                        if test not in reject:
+                            Available.append((i, j, direc))
+                            rejected = self.MatchedPlace((i, j), direc)
+                            reject.append(rejected)
         return Available
 
 
@@ -224,6 +228,9 @@ class Game():
     def __repr__(self):
         return str(self.__board)
     
+    def MatchedPlace(self, pos: tuple, dir: str):
+        return self.__board.MatchedPlace(pos, dir)
+
     def End(self):
         if self.__board.CheckFull():
             return True

@@ -274,11 +274,14 @@ class GUI(UI):
                 self.__boxes[col][row-1][4].grid(row=1,column=1, padx=1, pady=1)
 
         if not self.__Game.End():
-            self.__Game.nextTurn()
+            if not bc:
+                self.__Game.nextTurn()
             x = self.__getTurn()
             self.__currentplayer = self.__Names[x]
             self.__turndisplay.config(text=f"Current player is {self.__currentplayer}")
             self.__turndisplay.grid(row=0, columnspan=3)
+            if self.__Game.players[x].getType() == "C":
+                self.__PlayTurn()
         else:
             self.__EndGame()
         return
