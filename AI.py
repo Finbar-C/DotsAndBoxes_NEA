@@ -5,7 +5,43 @@ def MoveDif(Game: Game):
     pass
 
 def MoveMed(Game: Game):
-    pass
+    opts = Game.ReturnAvailable()
+    length = len(opts)
+    o = [[] for _ in range(4)]
+    for i in range(length):
+        test = opts[i]
+        matchedTest = Game.MatchedPlace((test[0], test[1]), test[2])
+        level_t1 = optLevel(test, Game)
+        if matchedTest != None:
+            level_t2 = optLevel(matchedTest, Game)
+        else:
+            level_t2 = 0
+        if level_t1 >= level_t2:
+            o[level_t1].append(test)
+        else:
+            o[level_t2].append(test)
+    
+    if len(o[3]) > 0:
+        choice = random.randint(0, len(o[3]) - 1)
+        move = o[3][choice]
+        return move
+    elif len(o[1]) > 0 and len(o[0]) > 0:
+        superchoice = random.randint(0, 1)
+        choice = random.randint(0, len(o[superchoice]) - 1)
+        move = o[superchoice][choice]
+        return move
+    elif len(o[1]) > 0:
+        choice = random.randint(0, len(o[1]) - 1)
+        move = o[1][choice]
+        return move
+    elif len(o[0]) > 0:
+        choice = random.randint(0, len(o[0]) - 1)
+        move = o[0][choice]
+        return move
+    else:
+        choice = random.randint(0, len(o[2]) - 1)
+        move = o[2][choice]
+        return move
 
 def MoveEasy(Game: Game):
     opts = Game.ReturnAvailable()
