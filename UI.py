@@ -65,6 +65,8 @@ class GUI(UI):
         console.config(yscrollcommand=scroll.set)
         self.__console = console
         self.__Names = []
+        self.__loggedIn = False
+        self.__activeAccountName = None
 
     def getEntryData(self, entry):
         return entry.get()
@@ -92,26 +94,38 @@ class GUI(UI):
 
     def __random(self):
         self.__NumPlayers = 2
-        self.__Names = ["Player", "RandomAI"]
+        if not self.__loggedIn:
+            self.__Names = ["Player", "RandomAI"]
+        else:
+            self.__Names = [self.__activeAccountName, "RandomAI"]
         self.__types = ["P", "C0"]
         self.__GameWin()
 
 
     def __easy(self):
         self.__NumPlayers = 2
-        self.__Names = ["Player", "EasyAI"]
+        if not self.__loggedIn:
+            self.__Names = ["Player", "EasyAI"]
+        else:
+            self.__Names = [self.__activeAccountName, "EasyAI"]
         self.__types = ["P", "C1"]
         self.__GameWin()
 
     def __medium(self):
         self.__NumPlayers = 2
-        self.__Names = ["Player", "MediumAI"]
+        if not self.__loggedIn:
+            self.__Names = ["Player", "MediumAI"]
+        else:
+            self.__Names = [self.__activeAccountName, "MediumAI"]
         self.__types = ["P", "C2"]
         self.__GameWin()
 
     def __difficult(self):
         self.__NumPlayers = 2
-        self.__Names = ["Player", "DifficultAI"]
+        if not self.__loggedIn:
+            self.__Names = ["Player", "DifficultAI"]
+        else:
+            self.__Names = [self.__activeAccountName, "DifficultAI"]
         self.__types = ["P", "C3"]
         self.__GameWin()
 
@@ -204,10 +218,10 @@ class GUI(UI):
             col = move[1]
             direc = move[2]
 
-        validU = ["top", "charm", "up", "north", "n"]
+        validU = ["top", "t", "charm", "up", "north", "n"]
         validL = ["left", "l", "west", "w"]
         validR = ["right", "r", "east", "e"]
-        validD = ["bottom", "strange", "down", "south", "s"]
+        validD = ["bottom", "b", "strange", "down", "south", "s"]
         #take data from buttons to give to place. use true / false return to decide on try again and turn cont.
         direc = direc.lower()
         if direc not in validU and direc not in validL and direc not in validR and direc not in validD:

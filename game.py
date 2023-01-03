@@ -248,5 +248,11 @@ class Game():
     
     def ReturnAvailable(self):
         return self.__board.ReturnAvailable()
+    
+    def getHeight(self):
+        return self.__board.getRows()
+    
+    def getWidth(self):
+        return self.__board.getCols()
 
 
