@@ -15,17 +15,34 @@ class Chain():
     
     def getLength(self):
         return self.__length
+    
+    def getRefs(self):
+        return self.__references
 
     def getOrigin(self):
         return self.__origin
     
     def addRef(self, ref: tuple):
         self.__references.append(ref)
+    
+    def popRef(self, ref: tuple):
+        for i in range(self.__references):
+            if self.__references[i] == ref:
+                res = self.__references.pop(i)
+                return res
+    
+    def popNoRef(self):
+        res = self.__references.pop()
+        return res
         
     def generate(self, game: Game):
         pass
 
     def isLong(self):
+        if self.__length >= 3:
+            self.__isLong = True
+        else:
+            self.__isLong = False
         return self.__isLong
 
 nextmoves = []
@@ -81,6 +98,100 @@ def MoveDif(Game: Game):
         # goes second, winner makes last move if played properly, wants an even number of turns for player
         # try to force player to open up first chain
         chains = createChains(Game, newOpts)
+        effectiveMovesRemaining = 0
+        for i in range(len(chains)):
+            if chains[i].isLong() and i != len(chains) - 1:
+                effectiveMovesRemaining += 2
+            else:
+                effectiveMovesRemaining += 1
+        effectiveMovesRemaining += 1
+        if len(o[3]) == 1:
+            inChain = False
+            for i in range(len(chains)):
+                refs = chains[i].getRefs()
+                if (o[3][0][0], o[3][0][1]) in refs:
+                    current = chains[i]
+                    pos = (o[3][0][0], o[3][0][1])
+                    inChain = True
+            if inChain and current.getLength() == 1:
+                move = o[3][0]
+            elif inChain:
+                move = playChain(current, pos, Game)
+            else:
+                move = o[3][0]
+            return move
+        elif len(o[3]) == 2:
+            for i in range(len(chains)):
+                refs = chains[i].getRefs()
+                if (o[3][0][0], o[3][0][1]) in refs:
+                    c1 = chains[i]
+                    p1 = (o[3][0][0], o[3][0][1])
+                    l1 = c1.getLength()
+                elif (o[3][1][0], o[3][1][1]) in refs:
+                    c2 = chains[i]
+                    p2 = (o[3][1][0], o[3][1][1])
+                    l2 = c2.getLength()
+            if l1 > 2 and l2 > 2:
+                move = playChain(c1, p1, Game)
+            elif l1 == 2 and l2 > 2:
+                move = playChain(c2, p2, Game)
+            elif l1 > 2 and l2 == 2:
+                move = playChain(c1, p1, Game)
+            elif l1 == 2 and l2 == 2:
+                move = o[3][0]
+            elif l1 == 1 and l2 == 2:
+                move = o[3][0]
+            elif l2 == 1 and l1 == 2:
+                move = o[3][1]
+
+        else:
+            if len(o[1]) > 0 and len(o[0]) > 0:
+                superchoice = random.randint(0, 1)
+                choice = random.randint(0, len(o[superchoice]) - 1)
+                move = o[superchoice][choice]
+                return move
+            elif len(o[1]) > 0:
+                choice = random.randint(0, len(o[1]) - 1)
+                move = o[1][choice]
+                return move
+            elif len(o[0]) > 0:
+                choice = random.randint(0, len(o[0]) - 1)
+                move = o[0][choice]
+                return move
+            else:
+                choice = random.randint(0, len(o[2]) - 1)
+                move = o[2][choice]
+                return move
+
+
+def playChain(chain: Chain, ref: tuple, Game: Game):
+    if chain.isLong():
+        reference = chain.popRef(ref)
+        dirs = direcCheck(Game, ref)
+        if Game.checkClear(reference, dirs[0]):
+            move = (reference[0], reference[1], dirs[0])
+            return move
+        else:
+            move = (reference[0], reference[1], dirs[1])
+            return move
+    else:
+        move = doubleBox(chain, Game, ref)
+        return move
+
+def doubleBox(chain: Chain, Game: Game, ref: tuple):
+    ref1 = chain.popRef(ref)
+    ref2 = chain.popNoRef()
+    direc = direcCheck(ref1)
+    matchref = Game.MatchedPlace(ref1, direc)
+    direc2 = direcCheck(ref2)
+    if direc2[0] != matchref[2]:
+        move = (ref2[0], ref2[1], direc2[0])
+    else:
+        move = (ref2[0], ref2[1], direc2[1])
+    return move
+
+    
+
     
 def createChains(Game: Game, opts: list):
     visited = []
@@ -90,7 +201,8 @@ def createChains(Game: Game, opts: list):
             newvis = []
             direc = direcCheck(Game, opts[i])
             generate(Game, opts[i], direc[0], newvis)
-            generate(Game, opts[i], direc[1], newvis)
+            if len(direc) == 2:
+                generate(Game, opts[i], direc[1], newvis)
             for i in range(len(newvis)):
                 visited.append(newvis[i])
             chain = Chain(newvis, opts[i])
@@ -101,34 +213,38 @@ def createChains(Game: Game, opts: list):
 def generate(Game: Game, start: tuple, direction: str, visited: list):
     if start not in visited:
         visited.append(start)
-    if direction == "E" and start[1] + 1 <= Game.getWidth():
+    if direction == "E" and start[1] + 1 < Game.getWidth():
         newPos = (start[0], start[1]+ 1)
         if newPos in visited:
             return
         direc = direcCheck(Game, newPos)
         generate(Game, newPos, direc[0], visited)
-        generate(Game, newPos, direc[1], visited)
+        if len(direc) == 2:
+            generate(Game, newPos, direc[1], visited)
     elif direction == "W" and start[1] - 1 >= 0:
         newPos = (start[0], start[1] - 1)
         if newPos in visited:
             return
         direc = direcCheck(Game, newPos)
         generate(Game, newPos, direc[0], visited)
-        generate(Game, newPos, direc[1], visited)
+        if len(direc) == 2:
+            generate(Game, newPos, direc[1], visited)
     elif direction == "N" and start[0] - 1 >= 0:
         newPos = (start[0] - 1, start[1])
         if newPos in visited:
             return
         direc = direcCheck(Game, newPos)
         generate(Game, newPos, direc[0], visited)
-        generate(Game, newPos, direc[1], visited)
-    elif direction == "S" and start[0] + 1 <= Game.getHeight():
+        if len(direc) == 2:
+            generate(Game, newPos, direc[1], visited)
+    elif direction == "S" and start[0] + 1 < Game.getHeight():
         newPos = (start[0] + 1, start[1])
         if newPos in visited:
             return
         direc = direcCheck(Game, newPos)
         generate(Game, newPos, direc[0], visited)
-        generate(Game, newPos, direc[1], visited)
+        if len(direc) == 2:
+            generate(Game, newPos, direc[1], visited)
     elif direction == "T":
         return
     else:
@@ -136,18 +252,38 @@ def generate(Game: Game, start: tuple, direction: str, visited: list):
 
 def direcCheck(Game : Game, tile: tuple):
     pos = (tile[0], tile[1])
-    if Game.checkClear(pos, "N") and Game.checkClear(pos, "S"):
-        direc = ("E", "W")
-    elif Game.checkClear(pos, "N") and Game.checkClear(pos, "E"):
-        direc = ("S, W")
-    elif Game.checkClear(pos, "N") and Game.checkClear(pos, "W"):
-        direc = ("S", "E")
-    elif Game.checkClear(pos, "S") and Game.checkClear(pos, "E"):
-        direc = ("N", "W")
-    elif Game.checkClear(pos, "S") and Game.checkClear(pos, "W"):
-        direc = ("N", "E")
-    elif Game.checkClear(pos, "E") and Game.checkClear(pos, "W"):
+    tcount = 0
+    if Game.checkClear(pos, "N"):
+        tcount+=1
+    if Game.checkClear(pos, "N"):
+        tcount+=1
+    if Game.checkClear(pos, "N"):
+        tcount+=1
+    if Game.checkClear(pos, "N"):
+        tcount+=1
+    if tcount == 3:
+        direc = "T"
+
+    elif Game.checkClear(pos, "N") and Game.checkClear(pos, "S"):
         direc = ("N", "S")
+    elif Game.checkClear(pos, "N") and Game.checkClear(pos, "E"):
+        direc = ("N, E")
+    elif Game.checkClear(pos, "N") and Game.checkClear(pos, "W"):
+        direc = ("N", "W")
+    elif Game.checkClear(pos, "S") and Game.checkClear(pos, "E"):
+        direc = ("S", "E")
+    elif Game.checkClear(pos, "S") and Game.checkClear(pos, "W"):
+        direc = ("S", "W")
+    elif Game.checkClear(pos, "E") and Game.checkClear(pos, "W"):
+        direc = ("E", "W")
+    elif Game.checkClear(pos, "N"):
+        direc = "N"
+    elif Game.checkClear(pos, "S"):
+        direc = "S"
+    elif Game.checkClear(pos, "W"):
+        direc = "W"
+    elif Game.checkClear(pos, "E"):
+        direc = "E"
     else:
         direc = "T"
     return direc
