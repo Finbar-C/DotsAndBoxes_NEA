@@ -98,6 +98,7 @@ def MoveDif(Game: Game):
         # goes second, winner makes last move if played properly, wants an even number of turns for player
         # try to force player to open up first chain
         chains = createChains(Game, newOpts)
+        print(chains)
         effectiveMovesRemaining = 0
         for i in range(len(chains)):
             if chains[i].isLong() and i != len(chains) - 1:
@@ -191,7 +192,12 @@ def doubleBox(chain: Chain, Game: Game, ref: tuple):
     return move
 
     
-
+################################################################
+# Skill set A - Dynamic Generation of Objects                  #
+# createChains function generates chains based on the current  #
+# state of the board, which is dependent on size and shape of  #
+# the board as well as the moves that have been made           #
+################################################################
     
 def createChains(Game: Game, opts: list):
     visited = []
@@ -209,6 +215,11 @@ def createChains(Game: Game, opts: list):
             chains.append(chain)
     return chains
             
+################################################################
+# Skill set A - Recursive Algorithms                           #
+# generate function recursively calls itself while creating a  #
+# chain object for use by the Difficult opponent algorithm     #
+################################################################
 
 def generate(Game: Game, start: tuple, direction: str, visited: list):
     if start not in visited:
@@ -250,16 +261,22 @@ def generate(Game: Game, start: tuple, direction: str, visited: list):
     else:
         return
 
+################################################################
+# Skill Set A - Pattern Recognition in user-defined algorithmn #
+# Data in the board is analysed to decide whether chains       #
+# continue, and their directions.                              #
+################################################################
+
 def direcCheck(Game : Game, tile: tuple):
     pos = (tile[0], tile[1])
     tcount = 0
     if Game.checkClear(pos, "N"):
         tcount+=1
-    if Game.checkClear(pos, "N"):
+    if Game.checkClear(pos, "S"):
         tcount+=1
-    if Game.checkClear(pos, "N"):
+    if Game.checkClear(pos, "E"):
         tcount+=1
-    if Game.checkClear(pos, "N"):
+    if Game.checkClear(pos, "W"):
         tcount+=1
     if tcount == 3:
         direc = "T"

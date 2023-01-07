@@ -7,14 +7,6 @@ class Board():
     H_LINE = "--"
     V_LINE = "|"
 
-    #############################################
-    #                                           #
-    # Skill Set A - List Operations             #
-    # Creation, editing and data extraction from#
-    # multi-dimensional list                    #
-    #                                           #
-    #############################################
-
     def __init__(self, rows: int, cols: int):
         self.__grid = [[[Board.EMPTY, Board.EMPTY, Board.EMPTY, Board.EMPTY] for _ in range(cols)] for _ in range(rows)]
         self.__claimed = [[Board.EMPTY for _ in range(cols)] for _ in range(rows)]
@@ -186,6 +178,9 @@ class Player():
 class Game():
 
     def __init__(self, dims: tuple, pnum: int, names: list, types: list):
+        print(pnum)
+        print(names)
+        print(types)
         self.__board = Board(dims[0], dims[1])
         self.players = []
         for i in range(pnum):
@@ -205,6 +200,15 @@ class Game():
     def getBoxExists(self, pos: tuple):
         return self.__board.getBoxExists(pos)
 
+    ################################################################
+    # Skill set A - Complex User-Defined Algorithms                #
+    # Place and Matched place methods are used to compensate for   #
+    # the potential occurrence of a line appearing twice in the    #
+    # board as it is between two sqaures. This will update both    #
+    # where necessary, claim boxes appropriately and update both   #
+    # the grid array and claimed array                             #
+    ################################################################
+    
     def place(self, pos: tuple, dir: str):
         boxCreated = False
         if self.__board.checkClear(pos, dir):

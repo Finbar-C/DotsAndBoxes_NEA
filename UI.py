@@ -5,6 +5,7 @@ from tkinter import *
 from itertools import product
 from abc import ABC, abstractmethod
 from AI import Move
+from functools import partial
 
 class UI():
 
@@ -14,7 +15,7 @@ class UI():
 
 class Terminal(UI):
     def __init__(self):
-        self.__game = Game((4,4), 2, ("1", "2"))
+        self.__game = Game((4,4), 2, ("1", "2"), ["P", "P"])
     
     def run(self):
         self.play()
@@ -194,29 +195,11 @@ class GUI(UI):
         return bc
 
 
-    def __PlayTurn(self):
+    def __PlayTurn(self, row, col, direction):
         turn = self.__Game.getTurn()
-        if self.__Game.players[turn].getType() == "P":
-
-            row = self.__yRefEntry.get()
-            col = self.__xRefEntry.get()
-            self.__yRefEntry.delete(0, END)
-            self.__xRefEntry.delete(0, END)
-            direc = self.__sideRefEntry.get()
-            self.__sideRefEntry.delete(0,END)
-            if int(row) > self.__height or int(row) < 1:
-                return
-            if int(col) > self.__width or int(col) < 1:
-                return
-            row = int(row) - 1
-            col = int(col) - 1
-        
-        elif self.__Game.players[turn].getType() == "C":
-            diff = self.__Game.players[turn].getDifficulty()
-            move = Move(diff, self.__Game)
-            row = move[0]
-            col = move[1]
-            direc = move[2]
+        row = row
+        col = col
+        direc = direction
 
         validU = ["top", "t", "charm", "up", "north", "n"]
         validL = ["left", "l", "west", "w"]
@@ -248,24 +231,24 @@ class GUI(UI):
             direc = "S"
         
         if direc == "N":
-            self.__boxes[col][row][2] = Label(self.__boxes[col][row][0], text="      ", bg="black")
+            self.__boxes[col][row][2].config(bg="black")
             self.__boxes[col][row][2].grid(row=0, column = 1, padx = 1, pady = 1)
         elif direc == "W":
-            self.__boxes[col][row][3] = Label(self.__boxes[col][row][0], text=" \n \n ", bg="black")
+            self.__boxes[col][row][3].config(bg="black")
             self.__boxes[col][row][3].grid(row=1, column=0, padx = 1, pady = 1)
         else:
             if direc == "E" and col + 1 == self.__width:
-                self.__boxes[col][row][6] = Label(self.__boxes[col][row][0], text=" \n \n ", bg="black")
+                self.__boxes[col][row][6].config(bg="black")
                 self.__boxes[col][row][6].grid(row=1,column=2, padx=1, pady=1)
             elif direc == "S" and row + 1 == self.__height:
-                self.__boxes[col][row][8] = Label(self.__boxes[col][row][0], text="      ", bg="black")
+                self.__boxes[col][row][8].config(bg="black")
                 self.__boxes[col][row][8].grid(row=2,column=1, padx=1, pady=1)
             else:
                 if direc == "E":
-                    self.__boxes[col+1][row][3] = Label(self.__boxes[col+1][row][0], text=" \n \n ", bg="black")
+                    self.__boxes[col+1][row][3].config(bg="black")
                     self.__boxes[col+1][row][3].grid(row=1,column=0, padx=1, pady=1)
                 elif direc == "S":
-                    self.__boxes[col][row+1][2] = Label(self.__boxes[col][row+1][0], text="      ", bg="black")
+                    self.__boxes[col][row+1][2].config(bg="black")
                     self.__boxes[col][row+1][2].grid(row=0,column=1, padx=1, pady=1)
 
         if bc:
@@ -295,7 +278,8 @@ class GUI(UI):
             self.__turndisplay.config(text=f"Current player is {self.__currentplayer}")
             self.__turndisplay.grid(row=0, columnspan=3)
             if self.__Game.players[x].getType() == "C":
-                self.__PlayTurn()
+                move = Move(self.__Game.players[x].getDifficulty(), self.__Game)
+                self.__PlayTurn(move[0], move[1], move[2])
         else:
             self.__EndGame()
         return
@@ -349,37 +333,37 @@ class GUI(UI):
             for j in range(height):
                 frame = []
                 frame.append(Frame(gridframe))
-                self.__boxes[i].append(frame)
-                self.__boxes[i][j][0].grid(row=j,column=i) # frame item at 0, corner 1, top 2, left 3, centre 4, right and bottom edges follow on edge self.__boxes
-                self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text=" ", bg="black"))
-                self.__boxes[i][j][1].grid(row=0,column=0, padx=1, pady=1)
-                self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text="       ", bg="grey"))
-                self.__boxes[i][j][2].grid(row=0,column=1, padx=1, pady=1)
-                self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text=" \n \n ", bg="grey"))
-                self.__boxes[i][j][3].grid(row=1,column=0, padx=1, pady=1)
-                self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text="      \n      \n      ", bg="white"))
-                self.__boxes[i][j][4].grid(row=1,column=1, padx=1, pady=1)
+                self.__boxes[j].append(frame)
+                self.__boxes[j][i][0].grid(row=j,column=i) # frame item at 0, corner 1, top 2, left 3, centre 4, right and bottom edges follow on edge self.__boxes
+                self.__boxes[j][i].append(Label(self.__boxes[j][i][0], text=" ", bg="black"))
+                self.__boxes[j][i][1].grid(row=0,column=0, padx=1, pady=1)
+                self.__boxes[j][i].append(Button(self.__boxes[j][i][0], text="       ", bg="grey", command=partial(self.__PlayTurn, j, i, "N")))
+                self.__boxes[j][i][2].grid(row=0,column=1, padx=1, pady=1)
+                self.__boxes[j][i].append(Button(self.__boxes[j][i][0], text=" \n \n ", bg="grey", command=partial(self.__PlayTurn, j, i, "W")))
+                self.__boxes[j][i][3].grid(row=1,column=0, padx=1, pady=1)
+                self.__boxes[j][i].append(Label(self.__boxes[j][i][0], text="      \n      \n      ", bg="white"))
+                self.__boxes[j][i][4].grid(row=1,column=1, padx=1, pady=1)
                 if i+1 == width:
-                    self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text=" ", bg="black"))
-                    self.__boxes[i][j][5].grid(row=0,column=2, padx=1, pady=1)
-                    self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text=" \n \n ", bg="grey"))
-                    self.__boxes[i][j][6].grid(row=1,column=2, padx=1, pady=1)
+                    self.__boxes[j][i].append(Label(self.__boxes[j][i][0], text=" ", bg="black"))
+                    self.__boxes[j][i][5].grid(row=0,column=2, padx=1, pady=1)
+                    self.__boxes[j][i].append(Button(self.__boxes[j][i][0], text=" \n \n ", bg="grey", command=partial(self.__PlayTurn, j, i, "E")))
+                    self.__boxes[j][i][6].grid(row=1,column=2, padx=1, pady=1)
                 else:
-                    self.__boxes[i][j].append(None)
-                    self.__boxes[i][j].append(None)
+                    self.__boxes[j][i].append(None)
+                    self.__boxes[j][i].append(None)
                 if j+1 == height:
-                    self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text=" ", bg="black"))
-                    self.__boxes[i][j][7].grid(row=2,column=0, padx=1, pady=1)
-                    self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text="      ", bg="grey"))
-                    self.__boxes[i][j][8].grid(row=2,column=1, padx=1, pady=1)
+                    self.__boxes[j][i].append(Label(self.__boxes[j][i][0], text=" ", bg="black"))
+                    self.__boxes[j][i][7].grid(row=2,column=0, padx=1, pady=1)
+                    self.__boxes[j][i].append(Button(self.__boxes[j][i][0], text="      ", bg="grey", command=partial(self.__PlayTurn, j, i, "S")))
+                    self.__boxes[j][i][8].grid(row=2,column=1, padx=1, pady=1)
                 else:
-                    self.__boxes[i][j].append(None)
-                    self.__boxes[i][j].append(None)
+                    self.__boxes[j][i].append(None)
+                    self.__boxes[j][i].append(None)
                 if i+1 == width and j+1 == height:
-                    self.__boxes[i][j].append(Label(self.__boxes[i][j][0], text=" ", bg="black"))
-                    self.__boxes[i][j][9].grid(row=2,column=2, padx=1, pady=1)
+                    self.__boxes[j][i].append(Label(self.__boxes[j][i][0], text=" ", bg="black"))
+                    self.__boxes[j][i][9].grid(row=2,column=2, padx=1, pady=1)
                 else:
-                    self.__boxes[i][j].append(None)
+                    self.__boxes[j][i].append(None)
         buttonframe = Frame(topframe)
         buttonframe.grid(row=1, column=0)
         self.__turndisplay = Label(buttonframe, text=f"Current player is {self.__currentplayer}")

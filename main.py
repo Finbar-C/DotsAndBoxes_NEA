@@ -9,14 +9,18 @@ t: play with Terminal""")
     quit()
 
 def main():
-    if len(argv) != 2:
+    if len(argv) == 2 and argv[1] not in ("t", "g"):
         usage()
-    elif argv[1] == "t":
-        game = Terminal()
-    elif argv[1] == "g":
-        game = GUI()
+    elif len(argv) == 2:
+        if argv[1] == "t":
+            game = Terminal()
+        elif argv[1] == "g":
+            game = GUI()
+    elif len(argv) > 2:
+        usage()
     else:
-        usage()
+        game = GUI()
+    
     
     game.run()
 
