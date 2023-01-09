@@ -231,44 +231,44 @@ class GUI(UI):
             direc = "S"
         
         if direc == "N":
-            self.__boxes[col][row][2].config(bg="black")
-            self.__boxes[col][row][2].grid(row=0, column = 1, padx = 1, pady = 1)
+            self.__boxes[row][col][2].config(bg="black")
+            self.__boxes[row][col][2].grid(row=0, column = 1, padx = 1, pady = 1)
         elif direc == "W":
-            self.__boxes[col][row][3].config(bg="black")
-            self.__boxes[col][row][3].grid(row=1, column=0, padx = 1, pady = 1)
+            self.__boxes[row][col][3].config(bg="black")
+            self.__boxes[row][col][3].grid(row=1, column=0, padx = 1, pady = 1)
         else:
             if direc == "E" and col + 1 == self.__width:
-                self.__boxes[col][row][6].config(bg="black")
-                self.__boxes[col][row][6].grid(row=1,column=2, padx=1, pady=1)
+                self.__boxes[row][col][6].config(bg="black")
+                self.__boxes[row][col][6].grid(row=1,column=2, padx=1, pady=1)
             elif direc == "S" and row + 1 == self.__height:
-                self.__boxes[col][row][8].config(bg="black")
-                self.__boxes[col][row][8].grid(row=2,column=1, padx=1, pady=1)
+                self.__boxes[row][col][8].config(bg="black")
+                self.__boxes[row][col][8].grid(row=2,column=1, padx=1, pady=1)
             else:
                 if direc == "E":
-                    self.__boxes[col+1][row][3].config(bg="black")
-                    self.__boxes[col+1][row][3].grid(row=1,column=0, padx=1, pady=1)
+                    self.__boxes[row][col+1][3].config(bg="black")
+                    self.__boxes[row][col+1][3].grid(row=1,column=0, padx=1, pady=1)
                 elif direc == "S":
-                    self.__boxes[col][row+1][2].config(bg="black")
-                    self.__boxes[col][row+1][2].grid(row=0,column=1, padx=1, pady=1)
+                    self.__boxes[row+1][col][2].config(bg="black")
+                    self.__boxes[row+1][col][2].grid(row=0,column=1, padx=1, pady=1)
 
         if bc:
             if self.__Game.getBoxExists((row, col)) != -1:
-                self.__boxes[col][row][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
-                self.__boxes[col][row][4].grid(row=1,column=1, padx=1, pady=1)
+                self.__boxes[row][col][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
+                self.__boxes[row][col][4].grid(row=1,column=1, padx=1, pady=1)
             if col+1 != self.__width:
                 if self.__Game.getBoxExists((row, col+1)) != -1 and direc == "E" and col+1 != self.__width:
-                    self.__boxes[col+1][row][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
-                    self.__boxes[col+1][row][4].grid(row=1,column=1, padx=1, pady=1)
+                    self.__boxes[row][col+1][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
+                    self.__boxes[row][col+1][4].grid(row=1,column=1, padx=1, pady=1)
             if row+1 != self.__height:
                 if self.__Game.getBoxExists((row+1, col)) != -1 and direc == "S" and row+1 != self.__height:
-                   self.__boxes[col][row+1][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
-                   self.__boxes[col][row+1][4].grid(row=1,column=1, padx=1, pady=1)
+                   self.__boxes[row+1][col][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
+                   self.__boxes[row+1][col][4].grid(row=1,column=1, padx=1, pady=1)
             if self.__Game.getBoxExists((row, col-1)) != -1 and direc == "W" and col != 0:
-                self.__boxes[col-1][row][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
-                self.__boxes[col-1][row][4].grid(row=1,column=1, padx=1, pady=1)
+                self.__boxes[row][col-1][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
+                self.__boxes[row][col-1][4].grid(row=1,column=1, padx=1, pady=1)
             if self.__Game.getBoxExists((row-1, col)) != -1 and direc == "N" and row != 0:
-                self.__boxes[col][row-1][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
-                self.__boxes[col][row-1][4].grid(row=1,column=1, padx=1, pady=1)
+                self.__boxes[row-1][col][4].config(text=f"      \n  {self.__Names[self.__getTurn()][0]}   \n      ")
+                self.__boxes[row-1][col][4].grid(row=1,column=1, padx=1, pady=1)
 
         if not self.__Game.End():
             if not bc:

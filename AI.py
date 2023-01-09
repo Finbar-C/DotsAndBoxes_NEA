@@ -26,7 +26,7 @@ class Chain():
         self.__references.append(ref)
     
     def popRef(self, ref: tuple):
-        for i in range(self.__references):
+        for i in range(len(self.__references)):
             if self.__references[i] == ref:
                 res = self.__references.pop(i)
                 return res
