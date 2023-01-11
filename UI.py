@@ -24,10 +24,27 @@ class Terminal(UI):
         pass
 
     def place(self):
-        row = int(input("What is the Row Number for your box? "))
-        col = int(input("What is the Column Number for your box? "))
-        pos = (row, col)
-        direction = input("Which side of the box would you like to play (N, S, E or W)? ")
+        valid = [1, 2, 3, 4]
+        while True:
+            row = int(input("What is the Row Number for your box? "))
+            if row in valid:
+                break
+            else:
+                print("Valid options are numbers 1-4")
+        while True:
+            col = int(input("What is the Column Number for your box? "))
+            if col in valid:
+                break
+            else:
+                print("Valid options are numbers 1-4")
+        pos = (row-1, col-1)
+        valRef = ["N", "S", "E", "W"]
+        while True:
+            direction = input("Which side of the box would you like to play (N, S, E or W)? ")
+            if direction.upper() in valRef:
+                break
+            else:
+                print("Valid directions are N, S, E and W")
         cont = self.__game.place(pos, direction)
         return cont
 
@@ -368,17 +385,8 @@ class GUI(UI):
         buttonframe.grid(row=1, column=0)
         self.__turndisplay = Label(buttonframe, text=f"Current player is {self.__currentplayer}")
         self.__turndisplay.grid(row=0, columnspan=3)
-        Label(buttonframe, text="Enter Row below").grid(row=1,column=0, padx=5, pady=5)
-        self.__yRefEntry = Entry(buttonframe)
-        self.__yRefEntry.grid(row=2, column=0, padx=5, pady=5)
-        Label(buttonframe, text="Enter Column below").grid(row=1, column=1, padx=5, pady=5)
-        self.__xRefEntry = Entry(buttonframe)
-        self.__xRefEntry.grid(row=2, column=1, padx=5, pady=5)
-        Label(buttonframe, text="Enter side below").grid(row=1, column=2, padx=5, pady=5)
-        self.__sideRefEntry = Entry(buttonframe)
-        self.__sideRefEntry.grid(row=2, column=2, padx=5, pady=5)
-        Button(buttonframe, text="Submit", command=self.__PlayTurn).grid(row=3,column=2, padx=5, pady=5)
-        Button(buttonframe, text="Help", command=self.__showHelpGame).grid(row=3, column=0, padx=5, pady=5)
+        Button(buttonframe, text="Exit", command=self.__GameWindow.destroy).grid(row=1,column=2, padx=5, pady=5)
+        Button(buttonframe, text="Help", command=self.__showHelpGame).grid(row=1, column=0, padx=5, pady=5)
 
     def __showHelpMain(self):
         window = Toplevel(self.__root)

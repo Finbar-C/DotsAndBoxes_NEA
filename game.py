@@ -222,9 +222,11 @@ class Game():
                     if self.__board.checkBox(newPos):
                         self.__board.ClaimBox(newPos, self.__turn)
                         boxCreated = True
+                        self.players[self.__turn].addBox()
         if self.__board.checkBox(pos):
             self.__board.ClaimBox(pos, self.__turn)
             boxCreated = True
+            self.players[self.__turn].addBox()
         
         return boxCreated
         
