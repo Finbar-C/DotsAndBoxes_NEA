@@ -21,7 +21,10 @@ class Board():
             for col in range(self.__cols):
                 dRow1.append(".")
                 dRow1.append(self.__grid[row][col][0])
-                dRow2.append(self.__grid[row][col][2])
+                if self.__grid[row][col][3] == Board.EMPTY:
+                    dRow2.append(" ")
+                else:
+                    dRow2.append(self.__grid[row][col][3])
                 if self.__claimed[row][col] == Board.EMPTY:
                     dRow2.append(Board.EMPTY)
                 else:
@@ -29,7 +32,11 @@ class Board():
             col = self.__cols - 1
             dRow1.append(".")
             dRow1.append("\n")
-            dRow2.append(self.__grid[row][col][3])
+            if self.__grid[row][col][2] == Board.EMPTY:
+                dRow2.append(" ")
+            else:
+                dRow2.append(self.__grid[row][col][2])
+
             dRow2.append("\n")
             display += dRow1
             display += dRow2
@@ -38,7 +45,8 @@ class Board():
         for col in range(self.__cols):
             dRow.append(".")
             dRow.append(self.__grid[row][col][1])
-            dRow.append(".")
+            
+        dRow.append(".")
         display += dRow
         ReturnStr = ""
         for i in range(len(display)):
