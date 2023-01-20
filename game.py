@@ -183,12 +183,16 @@ class Player():
     def getDifficulty(self):
         return self.__difficulty
 
+#####################################################
+# Skill set B - Simple OOP model                    #
+# Once the Game class is instantiated, it will      #
+# create instances of the player class and board    #
+# class for it to use                               #
+#####################################################
+
 class Game():
 
     def __init__(self, dims: tuple, pnum: int, names: list, types: list):
-        print(pnum)
-        print(names)
-        print(types)
         self.__board = Board(dims[0], dims[1])
         self.players = []
         for i in range(pnum):

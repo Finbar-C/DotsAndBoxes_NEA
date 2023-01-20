@@ -49,9 +49,16 @@ class Terminal(UI):
         return cont
 
     def play(self):
-        while not self.__game.End():
-
-            self.playTurn()
+        while True:
+            if not self.__game.End():
+                self.playTurn()
+            else:
+                break
+        scores = self.__game.CalculateScores()
+        if scores[0] == max(scores):
+            print(f"{self.__game.players[0].getName()} won with {scores[0]} boxes!")
+        else:
+            print(f"{self.__game.players[1].getName()} won with {scores[1]} boxes!")
     
     def playTurn(self):
         print(self.__game)
@@ -72,7 +79,6 @@ class GUI(UI):
         Button(frame, text="Help", command=self.__showHelpMain).pack(fill=X)
         Button(frame, text="Play Multiplayer", command=self.__NewGame).pack(fill=X)
         Button(frame, text="Play vs AI", command=self.__AiGame).pack(fill=X)
-        Button(frame, text="Options", command=self.__Settings).pack(fill=X)
         Button(frame, text="Exit", command=self.__Exit).pack(fill=X)
 
         scroll = Scrollbar(frame)
@@ -85,6 +91,7 @@ class GUI(UI):
         self.__Names = []
         self.__loggedIn = False
         self.__activeAccountName = None
+        self.__walls_var = False
 
     def getEntryData(self, entry):
         return entry.get()
@@ -150,40 +157,35 @@ class GUI(UI):
     def __NewGame(self):
         self.__NewGamewindow = Toplevel(self.__root)
         self.__NewGamewindow.title("Multiplayer Game Creation Menu")
-        frame = Frame(self.__NewGamewindow)
-        frame.grid(row=0,column=0)
-        Label(frame, text="Width:").grid(row=0, column=0, padx=5, pady=5)
-        self.__width = Entry(frame)
+        self.__gameframe = Frame(self.__NewGamewindow)
+        self.__gameframe.grid(row=0,column=0)
+        Label(self.__gameframe, text="Width:").grid(row=0, column=0, padx=5, pady=5)
+        self.__width = Entry(self.__gameframe)
         self.__width.grid(row=0, column=1, pady=5, padx=5)
-        Label(frame, text="Height:").grid(row=1, column=0, padx=5, pady=5)
-        self.__height = Entry(frame)
+        Label(self.__gameframe, text="Height:").grid(row=1, column=0, padx=5, pady=5)
+        self.__height = Entry(self.__gameframe)
         self.__height.grid(row=1, column=1, pady=5, padx=5)
-        Label(frame, text="Number of Players:").grid(row=2, column=0, padx=5, pady=5)
-        self.numPlayersEntry = Entry(frame)
+        Label(self.__gameframe, text="Number of Players:").grid(row=2, column=0, padx=5, pady=5)
+        self.numPlayersEntry = Entry(self.__gameframe)
         self.numPlayersEntry.grid(row=2, column=1, padx=5, pady=5)
-        Label(frame, text="Walls?").grid(row=3, column=0, padx=5, pady=5)
+        Label(self.__gameframe, text="Walls?").grid(row=3, column=0, padx=5, pady=5)
         self.__walls_var = False
-        self.__walls_switch = Button(frame, text="Off", bg="grey", fg="red", command=self.walls_toggle)
+        self.__walls_switch = Button(self.__gameframe, text="Off", bg="grey", fg="red", command=self.walls_toggle)
         self.__walls_switch.grid(row=3, column=1, padx=5, pady=5)
-        Button(frame, text="Create New Game", command=self.__GetNames).grid(row=4, columnspan=2, padx=5, pady=5)
+        Button(self.__gameframe, text="Create New Game", command=self.__GetNames).grid(row=4, columnspan=2, padx=5, pady=5)
 
 
 
     def walls_toggle(self): #switch method 
-        if not self.__walls_var:
+        print(self.__walls_var)
+        if self.__walls_var == False:
             self.__walls_switch.config(text="on", bg="white", fg="green")
+            self.__walls_switch.grid(row=3, column=1, padx=5, pady=5)
             self.__walls_var = True
-        if self.__walls_var:
+        elif self.__walls_var:
             self.__walls_switch.config(text="Off", bg="grey", fg="red")
+            self.__walls_switch.grid(row=3, column=1, padx=5, pady=5)
             self.__walls_var = False
-
-    def __Settings(self):
-        # displays settings window
-        window = Toplevel(self.__root)
-        window.title("Settings Menu")
-        frame = Frame(window)
-        #add options
-        frame.pack()
 
     def __GetNames(self):
         self.__NumPlayers = int(self.getEntryData(self.numPlayersEntry))
@@ -210,6 +212,15 @@ class GUI(UI):
         pos = (row, col)
         bc = self.__Game.place(pos, dir)
         return bc
+
+#####################################################
+# Skill set B - Simple User-Defined Algorithms      #
+# The game will generate multiple GUI windows to    #
+# prompt the user for input to create the game, and #
+# when a move is made, the game will perform various#
+# checks before placing it, and then updates the GUI#
+# appropriately                                     #
+#####################################################
 
 
     def __PlayTurn(self, row, col, direction):
@@ -315,6 +326,7 @@ class GUI(UI):
                 maximum = scores[i]
         Label(frame, text=f"{self.__Names[winner]} won with {maximum} claimed squares!").pack()
         Button(frame, text="Return to Menu", command=self.__EndGameDestroy).pack()
+        self.__Names = []
     
     def __EndGameDestroy(self):
         self.__GameWindow.destroy()

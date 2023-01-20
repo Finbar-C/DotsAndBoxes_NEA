@@ -47,6 +47,15 @@ class Chain():
 
 nextmoves = []
 
+#####################################################
+# Skill set B - Simple User-Defined Algorithms      #
+# The MoveDif function splits given move options    #
+# into groups based on how many sides they have, and#
+# then depending on how far into the game it is and #
+# which moves are available, it will decide which   #
+# move to make                                      #
+#####################################################
+
 def MoveDif(Game: Game):
     if len(nextmoves) > 0:
         move = nextmoves.pop(0)
@@ -128,7 +137,7 @@ def MoveDif(Game: Game):
                     c1 = chains[i]
                     p1 = (o[3][0][0], o[3][0][1])
                     l1 = c1.getLength()
-                elif (o[3][1][0], o[3][1][1]) in refs:
+                if (o[3][1][0], o[3][1][1]) in refs:
                     c2 = chains[i]
                     p2 = (o[3][1][0], o[3][1][1])
                     l2 = c2.getLength()
@@ -144,6 +153,10 @@ def MoveDif(Game: Game):
                 move = o[3][0]
             elif l2 == 1 and l1 == 2:
                 move = o[3][1]
+        
+        elif len(o[3]) > 2:
+            choice = random.randint(0,(len(o[3])-1))
+            move = o[3][choice]
 
         else:
             if len(o[1]) > 0 and len(o[0]) > 0:
