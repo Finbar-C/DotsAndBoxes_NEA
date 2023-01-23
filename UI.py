@@ -341,12 +341,12 @@ class GUI(UI):
         self.__height = height
         numPlayers = int(self.__NumPlayers)
         
-        if len(self.__Names) == 0:
+        if len(self.__Names) != 2 or (len(self.__Names) == 2 and self.__types[1][0] != "C"):
             self.__Names = []
             for i in range(numPlayers):
                 self.__Names.append(self.__NamesEntries[i].get())
 
-        self.__Game = Game((width, height), numPlayers, self.__Names, self.__types)
+        self.__Game = Game((height, width), numPlayers, self.__Names, self.__types)
         self.__GameWindow = Toplevel(self.__root)
         self.__GameWindow.title("Game Window")
         self.__currentplayer = self.__Names[0]
